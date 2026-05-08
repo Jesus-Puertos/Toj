@@ -1,153 +1,91 @@
 "use server";
 
-import { redirect } from 'next/navigation';
-import { createSupabaseServerClient, createSupabaseServiceClient } from '@/lib/supabase/server';
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
-/**
- * finalizarKyc — Sube selfie y comprobante a Supabase Storage,
- * actualiza el estado_kyc del ciudadano y registra el evento KYC_COMPLETADO.
- *
- * Diagrama 8 — Fase 4: Registro en BD
- * Diagrama 6 — Evento: KYC_COMPLETADO → dispara n8n
- */
-export async function finalizarKyc(
-  formData: FormData
-): Promise<{ error: string } | void> {
+// ── Subir selfie ──────────────────────────────────────────────────────────────
+
+export async function subirSelfieKyc(
+  formData: FormData,
+): Promise<{ url: string } | { error: string }> {
   const supabase = createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
 
-  if (!user) {
-    redirect('/login');
-  }
+  const archivo = formData.get("selfie") as File;
+  if (!archivo || archivo.size === 0) return { error: "Sin archivo" };
 
-  const admin = createSupabaseServiceClient();
+  const buffer = await archivo.arrayBuffer();
+  const path = `${user.id}/selfie.jpg`;
 
-  // Obtener el ciudadano_id desde la tabla de plataforma (o usar auth.user.id como fallback)
-  const { data: usuario } = await admin
-    .from('usuarios_plataforma')
-    .select('ciudadano_id')
-    .eq('auth_user_id', user.id)
-    .maybeSingle();
+  const { error } = await supabase.storage
+    .from("kyc-selfies")
+    .upload(path, buffer, { upsert: true, contentType: "image/jpeg" });
 
-  const ciudadanoId = usuario?.ciudadano_id ?? user.id;
+  if (error) return { error: error.message };
 
-  // ── Subir archivos a Supabase Storage ─────────────────────────
-  let urlSelfie: string | null = null;
-  let urlComprobante: string | null = null;
+  const { data } = supabase.storage.from("kyc-selfies").getPublicUrl(path);
+  // Cache-bust para que el navegador no sirva una versión anterior
+  return { url: `${data.publicUrl}?t=${Date.now()}` };
+}
 
-  const selfieFile = formData.get('selfie') as File | null;
-  const comprobanteFile = formData.get('comprobante') as File | null;
+// ── Subir comprobante de domicilio ────────────────────────────────────────────
 
-  if (selfieFile && selfieFile.size > 0) {
-    const selfieBuffer = Buffer.from(await selfieFile.arrayBuffer());
-    const selfieExt = selfieFile.name.split('.').pop() ?? 'jpg';
-    const selfiePath = `${ciudadanoId}/selfie.${selfieExt}`;
+export async function subirDocumentoKyc(
+  formData: FormData,
+): Promise<{ url: string } | { error: string }> {
+  const supabase = createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
 
-    const { error: selfieError } = await admin.storage
-      .from('kyc-selfies')
-      .upload(selfiePath, selfieBuffer, {
-        contentType: selfieFile.type,
-        upsert: true,
-      });
+  const archivo = formData.get("documento") as File;
+  if (!archivo || archivo.size === 0) return { error: "Sin archivo" };
 
-    if (!selfieError) {
-      const { data: publicUrl } = admin.storage
-        .from('kyc-selfies')
-        .getPublicUrl(selfiePath);
-      urlSelfie = publicUrl.publicUrl;
-    }
-  }
+  const ext =
+    archivo.type === "application/pdf"
+      ? "pdf"
+      : archivo.type === "image/png"
+        ? "png"
+        : archivo.type === "image/webp"
+          ? "webp"
+          : "jpg";
 
-  if (comprobanteFile && comprobanteFile.size > 0) {
-    const compBuffer = Buffer.from(await comprobanteFile.arrayBuffer());
-    const compExt = comprobanteFile.name.split('.').pop() ?? 'pdf';
-    const compPath = `${ciudadanoId}/comprobante.${compExt}`;
+  const path = `${user.id}/comprobante.${ext}`;
+  const buffer = await archivo.arrayBuffer();
 
-    const { error: compError } = await admin.storage
-      .from('kyc-documentos')
-      .upload(compPath, compBuffer, {
-        contentType: comprobanteFile.type,
-        upsert: true,
-      });
+  const { error } = await supabase.storage
+    .from("kyc-documentos")
+    .upload(path, buffer, { upsert: true, contentType: archivo.type });
 
-    if (!compError) {
-      const { data: publicUrl } = admin.storage
-        .from('kyc-documentos')
-        .getPublicUrl(compPath);
-      urlComprobante = publicUrl.publicUrl;
-    }
-  }
+  if (error) return { error: error.message };
 
-  // ── Actualizar estado KYC del ciudadano ───────────────────────
-  await admin
-    .from('ciudadanos')
-    .update({
-      estado_kyc: 'EnProceso',
-      ...(urlSelfie && { url_selfie_liveness: urlSelfie }),
-      ...(urlComprobante && { url_ine_frente: urlComprobante }),
-    })
-    .eq('id', ciudadanoId);
+  const { data } = supabase.storage.from("kyc-documentos").getPublicUrl(path);
+  return { url: `${data.publicUrl}?t=${Date.now()}` };
+}
 
-  // ── Registrar solicitud KYC (demo — score hardcodeado) ────────
-  await admin
-    .from('kyc_solicitudes')
-    .insert({
-      ciudadano_id: ciudadanoId,
-      proveedor: 'demo',
-      tipo_validacion: 'selfie_ine',
-      estado: 'EnProceso',
-      score_confianza: 96,
-      request_payload: {},
-      response_payload: { aprobado: true },
-      motivo_rechazo: null,
-      correlation_id: null,
-      completed_at: new Date().toISOString(),
-    })
-    .select()
-    .maybeSingle();
+// ── Completar KYC ─────────────────────────────────────────────────────────────
 
-  // ── Registrar validación RENAPO (demo) ────────────────────────
-  await admin
-    .from('renapo_validaciones')
-    .insert({
-      ciudadano_id: ciudadanoId,
-      resultado: 'VALIDO',
-      score_confianza: '96',
-    });
+export async function completarKyc(urls?: {
+  selfieUrl?: string;
+  documentoUrl?: string;
+}): Promise<{ error: string } | void> {
+  const supabase = createSupabaseServerClient();
 
-  // ── Registrar expedientes ────────────────────────────────────
-  await admin
-    .from('expedientes')
-    .insert([
-      {
-        ciudadano_id: ciudadanoId,
-        tipo_documento: 'INE',
-        estado_ocr: 'Pendiente',
-        url_archivo_s3: urlComprobante,
-      },
-      {
-        ciudadano_id: ciudadanoId,
-        tipo_documento: 'Selfie',
-        estado_ocr: 'Pendiente',
-        url_archivo_s3: urlSelfie,
-      },
-    ]);
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      kyc_completado: true,
+      ...(urls?.selfieUrl && { kyc_selfie_url: urls.selfieUrl }),
+      ...(urls?.documentoUrl && { kyc_documento_url: urls.documentoUrl }),
+    },
+  });
 
-  // ── Emitir evento KYC_COMPLETADO (Diagrama 6 → dispara n8n) ──
-  await admin
-    .from('eventos_dominio')
-    .insert({
-      aggregate_type: 'ciudadano',
-      aggregate_id: ciudadanoId,
-      tipo_evento: 'KYC_COMPLETADO',
-      payload: {
-        selfie_url: urlSelfie,
-        comprobante_url: urlComprobante,
-        score_confianza: 96,
-        proveedor: 'demo',
-      },
-      origen: 'nextjs',
-    });
+  if (error) return { error: error.message };
 
-  redirect('/kyc?status=pendiente');
+  revalidatePath("/dashboard");
+  redirect("/dashboard");
 }

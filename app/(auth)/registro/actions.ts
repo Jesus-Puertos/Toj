@@ -1,7 +1,26 @@
-'use server';
+"use server";
 
-import { createSupabaseServerClient, createSupabaseServiceClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import {
+  createSupabaseServerClient,
+  createSupabaseServiceClient,
+} from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+
+/** OAuth con Google — Google gestiona si es cuenta nueva o existente */
+export async function signInWithGoogle(): Promise<{ error: string } | void> {
+  const supabase = createSupabaseServerClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${siteUrl}/auth/callback`,
+      skipBrowserRedirect: true,
+    },
+  });
+  if (error || !data.url)
+    return { error: error?.message ?? "No se pudo continuar con Google." };
+  redirect(data.url);
+}
 
 /** Registro de ciudadano nuevo */
 export async function signUp(input: {
@@ -17,49 +36,47 @@ export async function signUp(input: {
     options: {
       data: {
         nombre_completo: input.nombreCompleto,
-        rol: 'ciudadano',
+        rol: "ciudadano",
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/callback`,
     },
   });
 
   if (error) return { error: error.message };
 
   const user = data.user;
-  if (!user) return { error: 'No se pudo crear el usuario.' };
+  if (!user) return { error: "No se pudo crear el usuario." };
 
   const admin = createSupabaseServiceClient();
 
-  const { error: ciudadanoError } = await admin
-    .from('ciudadanos')
-    .upsert(
-      {
-        id: user.id,
-        nombre_completo: input.nombreCompleto,
-        email: input.email,
-        estado_kyc: 'Pendiente',
-        es_activo: true,
-      },
-      { onConflict: 'id' }
-    );
+  const { error: ciudadanoError } = await admin.from("ciudadanos").upsert(
+    {
+      id: user.id,
+      nombre_completo: input.nombreCompleto,
+      email: input.email,
+      estado_kyc: "Pendiente",
+      es_activo: true,
+    },
+    { onConflict: "id" },
+  );
 
   if (ciudadanoError) return { error: ciudadanoError.message };
 
   const { error: usuarioError } = await admin
-    .from('usuarios_plataforma')
+    .from("usuarios_plataforma")
     .upsert(
       {
         auth_user_id: user.id,
         email: user.email ?? input.email,
         nombre_mostrar: input.nombreCompleto,
-        tipo_usuario: 'CIUDADANO',
-        estado: 'Activo',
+        tipo_usuario: "CIUDADANO",
+        estado: "Activo",
         ciudadano_id: user.id,
       },
-      { onConflict: 'auth_user_id' }
+      { onConflict: "auth_user_id" },
     );
 
   if (usuarioError) return { error: usuarioError.message };
 
-  redirect('/login?message=confirm_email');
+  redirect("/login?message=confirm_email");
 }

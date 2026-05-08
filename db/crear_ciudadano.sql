@@ -10,9 +10,8 @@
 
 -- INSTRUCCIONES:
 -- 1. Crea el usuario en Supabase Auth con:
---    Email:    jose@demo.toj.mx
---    Password: TojDemo2026!
---    (O el email que quieras)
+--    Email:    usa un correo de prueba controlado por tu equipo
+--    Password: genera una temporal en ese momento y no la guardes en Git
 -- 2. Copia el UUID del usuario creado
 -- 3. Reemplaza 'UUID-DEL-AUTH-USER' y 'UUID-CIUDADANO-EXISTENTE'
 --    (si el ciudadano ya existe en la tabla ciudadanos) 
@@ -36,8 +35,8 @@ BEGIN
   )
   VALUES (
     v_auth_uid,
-    'José Demo Usuario',         -- ← CAMBIAR al nombre real
-    'jose@demo.toj.mx',          -- ← CAMBIAR al email real
+    'Ciudadano Demo',            -- ← CAMBIAR al nombre real
+    'ciudadano.demo@example.com',-- ← CAMBIAR al email real
     'DEMO000000HVZXXX00',        -- ← CAMBIAR al CURP real (opcional)
     'Pendiente',
     '646180500001299999'         -- CLABE única (puedes cambiarla)
@@ -61,8 +60,8 @@ BEGIN
   )
   VALUES (
     v_auth_uid,
-    'jose@demo.toj.mx',          -- ← CAMBIAR al email real
-    'José Demo',                 -- ← CAMBIAR al nombre real
+    'ciudadano.demo@example.com',-- ← CAMBIAR al email real
+    'Ciudadano Demo',            -- ← CAMBIAR al nombre real
     'CIUDADANO',
     'Activo',
     v_ciudadano_id

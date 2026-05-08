@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { signInWithPassword, signInWithMagicLink } from './actions';
 
 type Tab = 'password' | 'magic';
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const paramMessage = searchParams.get('message');
   const paramError = searchParams.get('error');
@@ -189,5 +189,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><span className="material-symbols-outlined animate-spin text-[32px] text-toj-jade">progress_activity</span></div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

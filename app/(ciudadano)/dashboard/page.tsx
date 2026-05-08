@@ -29,10 +29,18 @@ export default async function CiudadanoDashboardPage() {
   // ── Obligaciones reales (con fallback a mock si la tabla está vacía) ──
   let obligaciones: Obligacion[] = MOCK_OBLIGACIONES;
   if (user) {
+    const { data: usuario } = await supabase
+      .from('usuarios_plataforma')
+      .select('ciudadano_id')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+
+    const ciudadanoId = usuario?.ciudadano_id ?? user.id;
+
     const { data } = await supabase
       .from('obligaciones')
       .select('id, tipo_tramite, monto_total, fecha_vencimiento, estado_cumplimiento')
-      .eq('ciudadano_id', user.id)
+      .eq('ciudadano_id', ciudadanoId)
       .order('fecha_vencimiento', { ascending: true });
     if (data && data.length > 0) obligaciones = data as Obligacion[];
   }

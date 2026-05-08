@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
+import { finalizarKyc } from './actions';
 
 type Paso = { numero: number; label: string; sublabel: string };
 
@@ -104,7 +105,11 @@ function StepFinalizar() {
           </div>
         ))}
       </div>
-      <Link href={"/dashboard" as Route} className="block w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors">Ir al Dashboard</Link>
+      <form action={finalizarKyc}>
+        <button type="submit" className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors">
+          Ir al Dashboard
+        </button>
+      </form>
     </div>
   );
 }

@@ -48,12 +48,38 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute =
     path.startsWith('/login') || path.startsWith('/registro');
 
+  const isKycRoute = path.startsWith('/kyc');
+
   // Sin sesión → redirigir a login
   if ((isProtectedCiudadano || isProtectedAdmin) && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('redirect', path);
     return NextResponse.redirect(url);
+  }
+
+  if (user && isProtectedCiudadano && !isKycRoute) {
+    const { data: usuario } = await supabase
+      .from('usuarios_plataforma')
+      .select('ciudadano_id')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+
+    const ciudadanoId = usuario?.ciudadano_id ?? user.id;
+
+    const { data: ciudadano } = await supabase
+      .from('ciudadanos')
+      .select('estado_kyc')
+      .eq('id', ciudadanoId)
+      .maybeSingle();
+
+    const estadoKyc = ciudadano?.estado_kyc ?? 'Pendiente';
+
+    if (estadoKyc !== 'Verificado') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/kyc';
+      return NextResponse.redirect(url);
+    }
   }
 
   // Con sesión en ruta auth → redirigir al dashboard

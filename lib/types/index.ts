@@ -14,6 +14,7 @@ export type Ciudadano = {
   nombre_completo: string;
   curp?: string;
   email: string;
+  chat_id_telegram?: string;
   rol: Rol;
   kyc_status: 'Pendiente' | 'En revisión' | 'Aprobado' | 'Rechazado';
   created_at: string;

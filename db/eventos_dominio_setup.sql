@@ -28,12 +28,12 @@ COMMENT ON TABLE public.eventos_dominio IS 'Tabla central de eventos para dispar
 -- 4. Buckets de Storage (Ejecutar en la consola de Storage o vía SQL si es posible)
 -- Nota: Supabase Storage suele requerir configuración vía UI o API específica.
 -- Estos son los nombres de los buckets que el código espera:
--- - 'kyc-selfies'
--- - 'kyc-documentos'
+     'kyc-selfies'
+     'kyc-documentos'
 
 -- 5. Trigger automático (Opcional)
 -- Si quieres que un cambio en la tabla 'pagos' cree automáticamente un evento:
-/*
+
 CREATE OR REPLACE FUNCTION fn_pago_confirmado_evento()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -48,4 +48,4 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER tr_pago_confirmado
 AFTER UPDATE ON public.pagos
 FOR EACH ROW EXECUTE FUNCTION fn_pago_confirmado_evento();
-*/
+

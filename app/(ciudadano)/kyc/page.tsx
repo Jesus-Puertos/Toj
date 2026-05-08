@@ -6,10 +6,10 @@ import type { Route } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { finalizarKyc } from './actions';
 
+// ── Stepper ──────────────────────────────────────────────────────────────────
 type Paso = { numero: number; label: string; sublabel: string };
-
 const PASOS: Paso[] = [
-  { numero: 1, label: 'Identidad', sublabel: 'Selfie + INE' },
+  { numero: 1, label: 'Identidad', sublabel: 'Selfie' },
   { numero: 2, label: 'Domicilio', sublabel: 'Comprobante' },
   { numero: 3, label: 'Finalizar', sublabel: 'Revisión' },
 ];
@@ -35,6 +35,7 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
   );
 }
 
+// ── Step 1: Cámara en Vivo (getUserMedia) ────────────────────────────────────
 function StepIdentidad({
   selfieFile,
   onSelect,
@@ -44,79 +45,218 @@ function StepIdentidad({
   onSelect: (file: File) => void;
   onNext: () => void;
 }) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const fallbackInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handlePick = () => {
-    inputRef.current?.click();
+  const [camState, setCamState] = useState<'idle' | 'active' | 'captured' | 'error'>('idle');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [camError, setCamError] = useState('');
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
+
+  const stopCamera = () => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) onSelect(file);
+  const startCamera = async (mode: 'user' | 'environment' = 'user') => {
+    stopCamera();
+    setCamState('active');
+    setCamError('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: mode, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+    } catch (err: any) {
+      setCamState('error');
+      if (err.name === 'NotAllowedError') {
+        setCamError('Permiso de cámara denegado. Habilítalo en tu navegador o usa el botón para subir una imagen.');
+      } else {
+        setCamError(`No se pudo acceder a la cámara: ${err.message || err.name}`);
+      }
+    }
   };
+
+  const capturarFoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    // Espejo para cámara frontal
+    if (facingMode === 'user') {
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    setPreviewUrl(dataUrl);
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], `selfie_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        onSelect(file);
+      }
+    }, 'image/jpeg', 0.92);
+    stopCamera();
+    setCamState('captured');
+  };
+
+  const reintentar = () => {
+    setPreviewUrl(null);
+    setCamState('idle');
+  };
+
+  const voltear = async () => {
+    const next = facingMode === 'user' ? 'environment' : 'user';
+    setFacingMode(next);
+    await startCamera(next);
+  };
+
+  useEffect(() => () => stopCamera(), []);
 
   return (
-    <div className="text-center">
-      <h1 className="text-h2 font-bold text-on-surface">Verifica tu identidad</h1>
-      <p className="text-body-md text-on-surface-variant mt-2">Toma una selfie para confirmar que eres tú</p>
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 mt-6">
-        <p className="text-label-caps text-on-surface-variant font-bold tracking-widest mb-5 uppercase">Posiciona tu rostro en el círculo</p>
-        <div className="relative mx-auto w-56 h-56 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border-4 border-primary animate-pulse-ring opacity-60" />
-          <div className="absolute inset-4 rounded-full border border-primary/40" />
-          <div className="w-full h-full rounded-full bg-[#0d2420] flex items-center justify-center overflow-hidden">
-            <span className="material-symbols-outlined text-primary/60" style={{ fontSize: '80px', fontVariationSettings: "'FILL' 0, 'wght' 200" }}>person</span>
+    <div>
+      <h1 className="text-h2 font-bold text-on-surface text-center">Verifica tu identidad</h1>
+      <p className="text-body-md text-on-surface-variant mt-2 text-center">Toma una selfie para confirmar que eres tú</p>
+
+      {/* Visor de cámara */}
+      <div className="relative mt-6 w-full overflow-hidden rounded-2xl bg-black" style={{ aspectRatio: '4/5', maxHeight: '380px' }}>
+
+        {/* IDLE */}
+        {camState === 'idle' && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[#0d1f1c]">
+            <div className="relative w-36 h-36">
+              <div className="absolute inset-0 rounded-full border-4 border-primary animate-pulse-ring opacity-60" />
+              <div className="w-full h-full rounded-full bg-[#0d2420] flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary/60" style={{ fontSize: '64px', fontVariationSettings: "'FILL' 0, 'wght' 200" }}>face</span>
+              </div>
+            </div>
+            <p className="text-white/60 text-body-sm">Presiona "Activar cámara" para comenzar</p>
           </div>
-        </div>
-        <div className="relative mx-auto w-56 h-0 -mt-56 pointer-events-none">
-          <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-primary rounded-tl-sm" />
-          <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-primary rounded-tr-sm" />
-          <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-primary rounded-bl-sm" />
-          <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-primary rounded-br-sm" />
-        </div>
-        <div className="mt-56 pt-1" />
-        <ul className="mt-4 space-y-1.5 text-left">
-          {['Buena iluminación', 'Sin lentes oscuros', 'Mira de frente'].map((tip) => (
-            <li key={tip} className="flex items-center gap-2 text-body-sm text-on-surface-variant">
-              <span className="material-symbols-outlined text-primary text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-              {tip}
-            </li>
-          ))}
-        </ul>
+        )}
+
+        {/* CAMERA ACTIVE */}
+        {camState === 'active' && (
+          <>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-full object-cover ${facingMode === 'user' ? '[transform:scaleX(-1)]' : ''}`}
+            />
+            {/* Marco de encuadre */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+              <div className="relative w-48 h-48">
+                <div className="absolute top-0 left-0 w-7 h-7 border-t-2 border-l-2 border-primary rounded-tl-sm" />
+                <div className="absolute top-0 right-0 w-7 h-7 border-t-2 border-r-2 border-primary rounded-tr-sm" />
+                <div className="absolute bottom-0 left-0 w-7 h-7 border-b-2 border-l-2 border-primary rounded-bl-sm" />
+                <div className="absolute bottom-0 right-0 w-7 h-7 border-b-2 border-r-2 border-primary rounded-br-sm" />
+              </div>
+            </div>
+            {/* Voltear cámara */}
+            <button onClick={voltear} className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full p-2.5 text-white hover:bg-black/70 transition-colors">
+              <span className="material-symbols-outlined text-[22px]">flip_camera_ios</span>
+            </button>
+          </>
+        )}
+
+        {/* CAPTURED */}
+        {camState === 'captured' && previewUrl && (
+          <img src={previewUrl} alt="Selfie capturada" className="w-full h-full object-cover" />
+        )}
+
+        {/* ERROR */}
+        {camState === 'error' && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[#1a0a0a] px-6">
+            <span className="material-symbols-outlined text-red-400 text-[48px]">no_photography</span>
+            <p className="text-red-300 text-body-sm text-center leading-relaxed">{camError}</p>
+          </div>
+        )}
       </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        capture="user"
-        onChange={handleChange}
-        className="hidden"
-      />
-      <button
-        type="button"
-        onClick={handlePick}
-        className="w-full mt-6 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-card"
-      >
-        <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>camera_alt</span>
-        {selfieFile ? 'Repetir selfie' : 'Tomar Selfie'}
-      </button>
-      {selfieFile && (
-        <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left text-body-sm text-on-surface">
-          Selfie cargada: <span className="font-semibold">{selfieFile.name}</span>
-        </div>
-      )}
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={!selfieFile}
-        className="w-full mt-4 bg-primary/20 text-on-surface rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 disabled:opacity-50"
-      >
-        Continuar
-      </button>
+
+      {/* Canvas oculto para captura */}
+      <canvas ref={canvasRef} className="hidden" />
+
+      {/* Botones de control */}
+      <div className="mt-4 space-y-3">
+        {camState === 'idle' && (
+          <button type="button" onClick={() => startCamera(facingMode)}
+            className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary/80 transition-colors">
+            <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>camera_alt</span>
+            Activar cámara
+          </button>
+        )}
+
+        {camState === 'active' && (
+          <button type="button" onClick={capturarFoto}
+            className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary/80 transition-all shadow-lg">
+            <span className="w-6 h-6 rounded-full border-4 border-on-primary/80 bg-on-primary/20 inline-block" />
+            Tomar Foto
+          </button>
+        )}
+
+        {camState === 'captured' && (
+          <div className="flex gap-3">
+            <button type="button" onClick={reintentar}
+              className="flex-1 bg-surface-container text-on-surface rounded-2xl py-3.5 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+              <span className="material-symbols-outlined text-[20px]">refresh</span>
+              Repetir
+            </button>
+            <button type="button" onClick={onNext}
+              className="flex-1 bg-primary text-on-primary rounded-2xl py-3.5 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary/80 transition-colors">
+              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+              ¡Usar ésta!
+            </button>
+          </div>
+        )}
+
+        {/* Fallback al error: subir desde galería */}
+        {camState === 'error' && (
+          <>
+            <input ref={fallbackInputRef} type="file" accept="image/*" capture="user"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  onSelect(file);
+                  setPreviewUrl(URL.createObjectURL(file));
+                  setCamState('captured');
+                }
+              }}
+              className="hidden"
+            />
+            <button type="button" onClick={() => fallbackInputRef.current?.click()}
+              className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary/80 transition-colors">
+              <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>upload</span>
+              Subir foto desde galería
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Tips */}
+      <ul className="mt-5 space-y-1.5">
+        {['Buena iluminación', 'Sin lentes oscuros', 'Mira de frente'].map((tip) => (
+          <li key={tip} className="flex items-center gap-2 text-body-sm text-on-surface-variant">
+            <span className="material-symbols-outlined text-primary text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+            {tip}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
+// ── Step 2: Comprobante de domicilio ─────────────────────────────────────────
 function StepDomicilio({
   comprobanteFile,
   onSelect,
@@ -128,10 +268,6 @@ function StepDomicilio({
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handlePick = () => {
-    inputRef.current?.click();
-  };
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) onSelect(file);
@@ -140,43 +276,33 @@ function StepDomicilio({
   return (
     <div className="text-center space-y-4">
       <h1 className="text-h2 font-bold text-on-surface">Comprobante de domicilio</h1>
-      <p className="text-body-md text-on-surface-variant">Sube o fotografía tu comprobante de domicilio reciente (menos de 3 meses).</p>
-      <div className="bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-2xl p-10 flex flex-col items-center gap-3">
+      <p className="text-body-md text-on-surface-variant">Sube o fotografía tu comprobante reciente (menos de 3 meses).</p>
+      <div
+        onClick={() => inputRef.current?.click()}
+        className="cursor-pointer bg-surface-container-lowest border-2 border-dashed border-outline-variant hover:border-primary rounded-2xl p-10 flex flex-col items-center gap-3 transition-colors"
+      >
         <span className="material-symbols-outlined text-on-surface-variant text-[48px]">upload_file</span>
         <p className="text-body-sm text-on-surface-variant">Toca para subir archivo</p>
         <span className="text-label-caps text-outline font-bold tracking-wide">PDF, JPG o PNG — Máx. 5 MB</span>
       </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*,application/pdf"
-        onChange={handleChange}
-        className="hidden"
-      />
-      <button
-        type="button"
-        onClick={handlePick}
-        className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors"
-      >
-        {comprobanteFile ? 'Reemplazar archivo' : 'Subir archivo'}
-      </button>
+      <input ref={inputRef} type="file" accept="image/*,application/pdf" onChange={handleChange} className="hidden" />
       {comprobanteFile && (
-        <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left text-body-sm text-on-surface">
-          Archivo cargado: <span className="font-semibold">{comprobanteFile.name}</span>
+        <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left text-body-sm text-on-surface flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>description</span>
+          <span className="flex-1 truncate">{comprobanteFile.name}</span>
+          <button onClick={() => inputRef.current?.click()} className="text-primary text-body-sm font-semibold hover:underline shrink-0">Cambiar</button>
         </div>
       )}
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={!comprobanteFile}
-        className="w-full bg-primary/20 text-on-surface rounded-2xl py-4 text-body-md font-bold hover:bg-primary/30 transition-colors disabled:opacity-50"
-      >
+      <button type="button" onClick={onNext} disabled={!comprobanteFile}
+        className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>arrow_forward</span>
         Continuar
       </button>
     </div>
   );
 }
 
+// ── Step 3: Finalizar ─────────────────────────────────────────────────────────
 function StepFinalizar({
   enRevision,
   selfieFile,
@@ -212,7 +338,9 @@ function StepFinalizar({
       <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 text-left space-y-2">
         {['Selfie capturada', 'Comprobante subido', 'Datos en revisión'].map((item, i) => (
           <div key={item} className="flex items-center gap-3">
-            <span className={`material-symbols-outlined text-[20px] ${i < 2 ? 'text-primary' : 'text-outline'}`} style={{ fontVariationSettings: "'FILL' 1" }}>{i < 2 ? 'check_circle' : 'radio_button_unchecked'}</span>
+            <span className={`material-symbols-outlined text-[20px] ${i < 2 ? 'text-primary' : 'text-outline'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+              {i < 2 ? 'check_circle' : 'radio_button_unchecked'}
+            </span>
             <span className={`text-body-sm ${i < 2 ? 'text-on-surface font-medium' : 'text-on-surface-variant'}`}>{item}</span>
           </div>
         ))}
@@ -221,20 +349,13 @@ function StepFinalizar({
         <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm text-red-400">{error}</div>
       )}
       {enRevision ? (
-        <Link
-          href={"/dashboard" as Route}
-          className="block w-full bg-primary/30 text-on-surface-variant rounded-2xl py-4 text-body-md font-bold cursor-not-allowed"
-          aria-disabled
-        >
+        <Link href={"/dashboard" as Route} className="block w-full bg-primary/30 text-on-surface-variant rounded-2xl py-4 text-body-md font-bold cursor-not-allowed" aria-disabled>
           En revisión — vuelve en 24 h
         </Link>
       ) : (
-        <button
-          type="button"
-          onClick={handleEnviar}
+        <button type="button" onClick={handleEnviar}
           disabled={isPending || !selfieFile || !comprobanteFile}
-          className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-        >
+          className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
           {isPending ? (
             <><span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span> Subiendo archivos...</>
           ) : (
@@ -246,13 +367,13 @@ function StepFinalizar({
   );
 }
 
+// ── Página principal con Suspense ─────────────────────────────────────────────
 function KycContent() {
   const [pasoActual, setPasoActual] = useState(1);
   const [selfieFile, setSelfieFile] = useState<File | null>(null);
   const [comprobanteFile, setComprobanteFile] = useState<File | null>(null);
   const searchParams = useSearchParams();
-  const status = searchParams.get('status');
-  const enRevision = status === 'pendiente';
+  const enRevision = searchParams.get('status') === 'pendiente';
   const avanzar = () => setPasoActual((p) => Math.min(p + 1, 3));
 
   useEffect(() => {
@@ -270,25 +391,13 @@ function KycContent() {
       <div className="px-5 py-6">
         <Stepper pasoActual={pasoActual} />
         {pasoActual === 1 && (
-          <StepIdentidad
-            selfieFile={selfieFile}
-            onSelect={setSelfieFile}
-            onNext={avanzar}
-          />
+          <StepIdentidad selfieFile={selfieFile} onSelect={setSelfieFile} onNext={avanzar} />
         )}
         {pasoActual === 2 && (
-          <StepDomicilio
-            comprobanteFile={comprobanteFile}
-            onSelect={setComprobanteFile}
-            onNext={avanzar}
-          />
+          <StepDomicilio comprobanteFile={comprobanteFile} onSelect={setComprobanteFile} onNext={avanzar} />
         )}
         {pasoActual === 3 && (
-          <StepFinalizar
-            enRevision={enRevision}
-            selfieFile={selfieFile}
-            comprobanteFile={comprobanteFile}
-          />
+          <StepFinalizar enRevision={enRevision} selfieFile={selfieFile} comprobanteFile={comprobanteFile} />
         )}
       </div>
     </div>

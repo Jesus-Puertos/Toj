@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#687688",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#64d9c9",
+                    "secondary-fixed-dim": "#ffb59f",
+                    "on-tertiary-fixed": "#0f1c2c",
+                    "on-secondary-fixed-variant": "#822709",
+                    "outline": "#6d7a77",
+                    "surface-tint": "#006a60",
+                    "outline-variant": "#bcc9c6",
+                    "on-primary-container": "#f4fffb",
+                    "on-tertiary-fixed-variant": "#3a4859",
+                    "background": "#f8fafa",
+                    "on-background": "#191c1d",
+                    "secondary-fixed": "#ffdbd1",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#3b0a00",
+                    "on-surface-variant": "#3d4947",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#82f6e5",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#00685e",
+                    "inverse-primary": "#64d9c9",
+                    "surface-container-high": "#e6e8e9",
+                    "surface-container-highest": "#e1e3e3",
+                    "tertiary": "#505d6f",
+                    "inverse-on-surface": "#eff1f1",
+                    "on-tertiary-container": "#fdfcff",
+                    "tertiary-fixed-dim": "#bac8dc",
+                    "on-primary-fixed": "#00201c",
+                    "surface-container": "#eceeee",
+                    "surface-variant": "#e1e3e3",
+                    "secondary-container": "#fe825e",
+                    "tertiary-fixed": "#d6e4f9",
+                    "surface-bright": "#f8fafa",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#721c00",
+                    "on-primary-fixed-variant": "#005048",
+                    "secondary": "#a23e1f",
+                    "inverse-surface": "#2e3131",
+                    "surface-dim": "#d8dada",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f2f4f4",
+                    "primary-container": "#008377",
+                    "surface": "#f8fafa",
+                    "on-surface": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "1rem",
+                    "lg": "1.5rem",
+                    "sm": "0.5rem",
+                    "xl": "2.5rem",
+                    "xs": "0.25rem",
+                    "base": "4px",
+                    "2xl": "4rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "mono": ["JetBrains Mono"],
+                    "h2": ["Inter"],
+                    "h3": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "h1": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #f8fafa; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased font-body-md text-on-surface flex justify-center items-center min-h-screen">
+<!-- Mobile Device Simulation Shell -->
+<div class="relative w-full max-w-[400px] h-[844px] bg-background shadow-2xl rounded-[3rem] overflow-hidden border-[8px] border-surface-dim flex flex-col">
+<!-- Top App Bar (Shared Component Logic) -->
+<header class="flex justify-between items-center w-full px-lg h-16 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+<span class="font-h3 text-h3 text-primary">TOJ Platform</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto px-lg py-lg space-y-lg">
+<!-- Payment Summary Section (Citizen Layout) -->
+<section class="space-y-sm">
+<div class="flex flex-col gap-xs">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Resumen de Pago</span>
+<h1 class="font-h2 text-h2 text-on-surface">Pago Predial 2026</h1>
+<div class="flex items-center justify-between bg-surface-container-low rounded-xl p-md border border-outline-variant">
+<span class="font-body-md text-on-surface-variant">Monto Total</span>
+<span class="font-h3 text-h3 text-primary">$2,500.00</span>
+</div>
+</div>
+</section>
+<!-- STP Transfer Visual (Bento-style Card) -->
+<section class="glass-card rounded-xl p-lg shadow-sm flex flex-col items-center gap-lg border border-primary/10">
+<div class="text-center space-y-xs">
+<p class="font-body-md text-on-surface font-semibold">Transferencia vía STP</p>
+<p class="font-body-sm text-on-surface-variant">Escanea el código QR desde tu App bancaria</p>
+</div>
+<!-- QR Code Placeholder -->
+<div class="bg-white p-md rounded-xl shadow-inner border border-outline-variant relative group">
+<img alt="QR Transfer" class="w-48 h-48 opacity-90 group-hover:opacity-100 transition-opacity" data-alt="A professional high-resolution QR code generated for a financial transaction, presented on a clean white square card with subtle rounded corners. The surrounding environment is a soft-focus minimalist mobile interface with jade-green accents. The lighting is bright and clean, emphasizing security and modern banking standards in a light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh37hPj6wBRyvb0PzZthDR__Ik1FHBdrcJwuLr1t1if975ICH9KeEfA8kls6whbh8HLMymXEhpJ1tmwZYwbobmr8LacH_b6g1U-uquch2l4QLQvQWUQ4-CvmczoMyN7xEyIMcgJGcA5YF0YNmRQJmYlp9f1UoG8o1efb8cJ5Src4XhMXJObw63iWlTIix2Iwj_IZ-3W2EfIe9EpHCqQtG04Fijc0OFYZ-lqcQHUv5yAcMEBQz1VtLHslhImIlhln0sbGxiTLLkAUl9"/>
+<div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[80px]">qr_code_2</span>
+</div>
+</div>
+<!-- CLABE Display -->
+<div class="w-full space-y-sm">
+<label class="font-label-caps text-label-caps text-on-surface-variant">CLABE ÚNICA DE PAGO</label>
+<div class="flex items-center justify-between bg-surface-container rounded-lg p-md border border-outline-variant group">
+<span class="font-mono text-lg text-on-surface tracking-wider font-bold">6461 8011 0401 2345 67</span>
+<button class="bg-primary text-on-primary p-xs rounded-lg hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+<p class="text-[10px] text-tertiary text-center px-md italic leading-tight">
+                        Este número es exclusivo para este pago y se vincula automáticamente a su cuenta.
+                    </p>
+</div>
+</section>
+<!-- Instructions & Trust -->
+<section class="space-y-md pt-md">
+<div class="flex items-start gap-md">
+<div class="bg-primary-fixed p-sm rounded-full">
+<span class="material-symbols-outlined text-primary text-sm" data-weight="fill">shield</span>
+</div>
+<div class="flex-1">
+<p class="font-body-sm font-semibold text-on-surface">Transacción Protegida</p>
+<p class="font-body-sm text-on-surface-variant">Integración directa con el Sistema de Transferencias y Pagos (STP).</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer / Status Section -->
+<footer class="bg-surface-container-low border-t border-outline-variant p-lg space-y-md">
+<div class="flex items-center justify-center gap-md">
+<div class="relative w-6 h-6">
+<div class="absolute inset-0 rounded-full border-2 border-primary/20"></div>
+<div class="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+</div>
+<span class="font-body-sm text-on-surface-variant italic">Esperando confirmación de transferencia vía STP...</span>
+</div>
+<!-- Bottom NavBar (Shared Component Logic - Suppressed per Relevance Check but visible for UI Context in payment flow if needed) -->
+<div class="flex justify-around items-center h-12 pt-xs">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-caps text-[10px]">Wallet</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-[10px]">Payments</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-caps text-[10px]">Assistant</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-[10px]">Profile</span>
+</div>
+</div>
+</footer>
+<!-- Interaction Overlay (Decorative) -->
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-surface-dim rounded-full"></div>
+</div>
+</body></html>

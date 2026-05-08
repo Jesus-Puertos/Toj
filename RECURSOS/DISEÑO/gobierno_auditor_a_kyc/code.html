@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#687688",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#64d9c9",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-tertiary-fixed": "#0f1c2c",
+                        "on-secondary-fixed-variant": "#822709",
+                        "outline": "#6d7a77",
+                        "surface-tint": "#006a60",
+                        "outline-variant": "#bcc9c6",
+                        "on-primary-container": "#f4fffb",
+                        "on-tertiary-fixed-variant": "#3a4859",
+                        "background": "#f8fafa",
+                        "on-background": "#191c1d",
+                        "secondary-fixed": "#ffdbd1",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#3b0a00",
+                        "on-surface-variant": "#3d4947",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#82f6e5",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#00685e",
+                        "inverse-primary": "#64d9c9",
+                        "surface-container-high": "#e6e8e9",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary": "#505d6f",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-container": "#fdfcff",
+                        "tertiary-fixed-dim": "#bac8dc",
+                        "on-primary-fixed": "#00201c",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "secondary-container": "#fe825e",
+                        "tertiary-fixed": "#d6e4f9",
+                        "surface-bright": "#f8fafa",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#721c00",
+                        "on-primary-fixed-variant": "#005048",
+                        "secondary": "#a23e1f",
+                        "inverse-surface": "#2e3131",
+                        "surface-dim": "#d8dada",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f2f4f4",
+                        "primary-container": "#008377",
+                        "surface": "#f8fafa",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "1rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "xl": "2.5rem",
+                        "xs": "0.25rem",
+                        "base": "4px",
+                        "2xl": "4rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "mono": ["JetBrains Mono"],
+                        "h2": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f8fafa;
+            color: #191c1d;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- SideNavBar (The Anchor) -->
+<aside class="fixed left-0 top-0 h-full w-60 bg-surface-container-high border-r border-outline-variant flex flex-col py-md px-sm z-40">
+<div class="mb-xl px-md">
+<div class="flex items-center gap-sm mb-md">
+<img alt="Government Administrator" class="rounded-full border border-outline-variant" data-alt="A professional portrait of a government official in a formal blue suit, set against a blurred background of a modern architectural governmental building. The lighting is high-key and authoritative, using a color palette of deep navy and soft jade green to convey trust and agility. The visual style is clean and sharp, suitable for a high-security administrative interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm2mdCs2xQ9HZfwz0kDMmykgm2zF4k5HrT1hRsdu6bP_Eiybh_CFprjoC79vM49oTCYHm1jN6YXCbIzbmZioHlFoHFd44Fx1rpHT7Wt3JXvUs13ag-BPtZ69DnuEPQQxgcAQBNbIOqv9W6ATjXWmX_t9eNEigNij_qSAsE6U3DtaD6L7VIzQYIpFbyywYOnFmSh5cmxcEOr1kK_cUHdopSrHaKSRiZcxZq5QGYB94QgQDO5hTVmRW-k4fY1WEXFHfEAft8-sZse-TZ"/>
+<div>
+<p class="font-h3 text-primary text-body-md font-bold leading-tight">TOJ Admin</p>
+<p class="text-on-surface-variant font-body-sm text-[11px]">Revenue Department</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-sm px-md py-sm rounded transition-all duration-150 text-on-surface-variant hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded transition-all duration-150 text-on-surface-variant hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined" data-icon="dataset">dataset</span>
+<span class="font-body-sm">ETL Module</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded transition-all duration-150 text-primary font-bold bg-surface-bright" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-body-sm">KYC Audit</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded transition-all duration-150 text-on-surface-variant hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="font-body-sm">Reconciliation</span>
+</a>
+</nav>
+<div class="mt-auto space-y-xs">
+<button class="w-full mb-md px-md py-sm bg-secondary-container text-on-secondary-container rounded font-bold text-body-sm flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="notifications_active">notifications_active</span>
+                    System Alert
+                </button>
+<a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-sm">Settings</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-60 flex-1 flex flex-col h-full overflow-hidden bg-background">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-lg h-16 bg-surface border-b border-outline-variant shrink-0">
+<h1 class="text-h3 font-h3 text-primary font-bold">Expedientes y Auditoría KYC</h1>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant font-body-sm hover:bg-surface-container transition-colors duration-200 px-md py-xs rounded">Citizen View</button>
+<button class="bg-primary text-on-primary font-body-sm font-bold px-md py-xs rounded shadow-sm hover:opacity-90 transition-opacity">Switch to CRM</button>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-lg">
+<div class="max-w-[1440px] mx-auto space-y-lg">
+<!-- Filters Area (Bento-style Grid row) -->
+<div class="grid grid-cols-12 gap-md items-end">
+<div class="col-span-12 md:col-span-5">
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Búsqueda de Ciudadano</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-xl pr-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:ring-offset-2 outline-none transition-all" placeholder="Buscador por CURP o Nombre..." type="text"/>
+</div>
+</div>
+<div class="col-span-12 md:col-span-3">
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Estado de Verificación</label>
+<select class="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary outline-none">
+<option>Todos los estados</option>
+<option>Verificado</option>
+<option>Pendiente</option>
+<option>En Revisión</option>
+<option>Rechazado</option>
+</select>
+</div>
+<div class="col-span-12 md:col-span-2">
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Delegación</label>
+<select class="w-full px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary outline-none">
+<option>CDMX</option>
+<option>Jalisco</option>
+<option>Nuevo León</option>
+</select>
+</div>
+<div class="col-span-12 md:col-span-2">
+<button class="w-full bg-tertiary text-on-tertiary px-md py-sm rounded-lg font-bold flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                                Filtros Avanzados
+                            </button>
+</div>
+</div>
+<!-- Stats Row (Compact CRM Style) -->
+<div class="grid grid-cols-4 gap-md">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg flex items-center justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-xs uppercase">Total Expedientes</p>
+<p class="text-h3 font-bold text-primary">12,482</p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[32px]" data-icon="folder_shared">folder_shared</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg flex items-center justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-xs uppercase">Pendientes KYC</p>
+<p class="text-h3 font-bold text-secondary">842</p>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed-dim text-[32px]" data-icon="pending_actions">pending_actions</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg flex items-center justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-xs uppercase">Tasa de Aprobación</p>
+<p class="text-h3 font-bold text-primary">94.2%</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[32px]" data-icon="verified">verified</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg flex items-center justify-between">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-xs uppercase">Auditorías Hoy</p>
+<p class="text-h3 font-bold text-tertiary">156</p>
+</div>
+<span class="material-symbols-outlined text-tertiary text-[32px]" data-icon="task">task</span>
+</div>
+</div>
+<!-- Data Table Section (Administrative Density) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h2 class="text-body-md font-bold text-on-surface">Listado de Auditoría</h2>
+<div class="flex gap-sm">
+<button class="px-md py-xs border border-outline-variant bg-white rounded text-body-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span>
+                                    Exportar CSV
+                                </button>
+<button class="px-md py-xs bg-primary text-on-primary rounded text-body-sm font-bold">Auditar Lote</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-high text-on-surface text-left border-b border-outline-variant">
+<th class="p-sm text-label-caps font-label-caps border-r border-outline-variant">Ciudadano</th>
+<th class="p-sm text-label-caps font-label-caps border-r border-outline-variant">CURP / ID</th>
+<th class="p-sm text-label-caps font-label-caps border-r border-outline-variant">Estado KYC</th>
+<th class="p-sm text-label-caps font-label-caps border-r border-outline-variant">Documentos</th>
+<th class="p-sm text-label-caps font-label-caps border-r border-outline-variant">Fecha Registro</th>
+<th class="p-sm text-label-caps font-label-caps text-center">Acciones</th>
+</tr>
+</thead>
+<tbody class="text-body-sm">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="p-sm border-r border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-bold text-[10px]">RA</div>
+<div class="leading-tight">
+<p class="font-bold">Rodrigo Alarcón</p>
+<p class="text-[11px] text-on-surface-variant">r.alarcon@example.com</p>
+</div>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant font-mono text-[12px]">ALRO850624HDFRRM02</td>
+<td class="p-sm border-r border-outline-variant">
+<span class="inline-flex items-center gap-xs px-md py-xs rounded-full bg-primary-container text-on-primary-container text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                                                VERIFICADO
+                                            </span>
+</td>
+<td class="p-sm border-r border-outline-variant">
+<div class="flex gap-xs">
+<span class="px-xs py-0.5 rounded bg-surface-container-highest border border-outline-variant text-[10px] font-bold">INE</span>
+<span class="px-xs py-0.5 rounded bg-surface-container-highest border border-outline-variant text-[10px] font-bold">DOM</span>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant text-on-surface-variant">12 Oct 2023</td>
+<td class="p-sm text-center">
+<button class="text-primary hover:underline font-bold text-xs px-md py-xs">Ver detalles</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-outline-variant bg-surface-container-low hover:bg-surface-container transition-colors">
+<td class="p-sm border-r border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-[10px]">MM</div>
+<div class="leading-tight">
+<p class="font-bold">Mariana Montes</p>
+<p class="text-[11px] text-on-surface-variant">m.montes@example.com</p>
+</div>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant font-mono text-[12px]">MONM920115MDFXSS04</td>
+<td class="p-sm border-r border-outline-variant">
+<span class="inline-flex items-center gap-xs px-md py-xs rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                                                PENDIENTE
+                                            </span>
+</td>
+<td class="p-sm border-r border-outline-variant">
+<div class="flex gap-xs">
+<span class="px-xs py-0.5 rounded bg-surface-container-highest border border-outline-variant text-[10px] font-bold">INE</span>
+<span class="px-xs py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-bold">MISSING</span>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant text-on-surface-variant">14 Oct 2023</td>
+<td class="p-sm text-center">
+<button class="text-primary hover:underline font-bold text-xs px-md py-xs">Ver detalles</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="p-sm border-r border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-[10px]">JL</div>
+<div class="leading-tight">
+<p class="font-bold">Juan Luna</p>
+<p class="text-[11px] text-on-surface-variant">j.luna@example.com</p>
+</div>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant font-mono text-[12px]">LUNJ780410HDFNNP09</td>
+<td class="p-sm border-r border-outline-variant">
+<span class="inline-flex items-center gap-xs px-md py-xs rounded-full bg-primary-container text-on-primary-container text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                                                VERIFICADO
+                                            </span>
+</td>
+<td class="p-sm border-r border-outline-variant">
+<div class="flex gap-xs">
+<span class="px-xs py-0.5 rounded bg-surface-container-highest border border-outline-variant text-[10px] font-bold">INE</span>
+<span class="px-xs py-0.5 rounded bg-surface-container-highest border border-outline-variant text-[10px] font-bold">DOM</span>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant text-on-surface-variant">15 Oct 2023</td>
+<td class="p-sm text-center">
+<button class="text-primary hover:underline font-bold text-xs px-md py-xs">Ver detalles</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="border-b border-outline-variant bg-surface-container-low hover:bg-surface-container transition-colors">
+<td class="p-sm border-r border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center font-bold text-[10px]">SM</div>
+<div class="leading-tight">
+<p class="font-bold">Sofia Méndez</p>
+<p class="text-[11px] text-on-surface-variant">s.mendez@example.com</p>
+</div>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant font-mono text-[12px]">MENS940822MDFRRL01</td>
+<td class="p-sm border-r border-outline-variant">
+<span class="inline-flex items-center gap-xs px-md py-xs rounded-full bg-error-container text-on-error-container text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]" data-icon="cancel">cancel</span>
+                                                RECHAZADO
+                                            </span>
+</td>
+<td class="p-sm border-r border-outline-variant">
+<div class="flex gap-xs">
+<span class="px-xs py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-bold">INVÁLIDO</span>
+</div>
+</td>
+<td class="p-sm border-r border-outline-variant text-on-surface-variant">15 Oct 2023</td>
+<td class="p-sm text-center">
+<button class="text-primary hover:underline font-bold text-xs px-md py-xs">Ver detalles</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-sm bg-surface-container border-t border-outline-variant flex justify-between items-center">
+<p class="text-body-sm text-on-surface-variant">Mostrando 1-4 de 12,482 ciudadanos</p>
+<div class="flex items-center gap-xs">
+<button class="p-xs hover:bg-surface-container-highest rounded"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<button class="px-md py-xs bg-primary text-on-primary rounded text-xs font-bold">1</button>
+<button class="px-md py-xs hover:bg-surface-container-highest rounded text-xs">2</button>
+<button class="px-md py-xs hover:bg-surface-container-highest rounded text-xs">3</button>
+<button class="p-xs hover:bg-surface-container-highest rounded"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Lower Layout Area: Audit Insights & Recent Logs -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Quick Analysis Chart Placeholder -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex flex-col gap-md h-64">
+<div class="flex justify-between items-center">
+<h3 class="text-body-md font-bold">Tendencia de Verificación (Mensual)</h3>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="flex-1 flex items-end gap-md px-md">
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[40%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">12k</div>
+</div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[65%] relative group"></div>
+<div class="flex-1 bg-primary/60 rounded-t-sm h-[55%] relative group"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-[85%] relative group"></div>
+<div class="flex-1 bg-primary/50 rounded-t-sm h-[70%] relative group"></div>
+<div class="flex-1 bg-primary/30 rounded-t-sm h-[45%] relative group"></div>
+<div class="flex-1 bg-primary/70 rounded-t-sm h-[95%] relative group"></div>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-on-surface-variant border-t border-outline-variant pt-xs uppercase">
+<span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span>
+</div>
+</div>
+<!-- Logs Section -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant bg-tertiary/10">
+<h3 class="text-body-md font-bold">Bitácora de Auditoría</h3>
+</div>
+<div class="p-md space-y-md">
+<div class="flex gap-md border-l-2 border-primary pl-md py-xs">
+<div class="text-[11px] font-mono text-on-surface-variant shrink-0">10:42 AM</div>
+<div class="leading-tight">
+<p class="font-bold text-body-sm">Aprobación Manual</p>
+<p class="text-xs text-on-surface-variant">Expediente ALRO850624 validado por Auditor ID-422.</p>
+</div>
+</div>
+<div class="flex gap-md border-l-2 border-secondary pl-md py-xs">
+<div class="text-[11px] font-mono text-on-surface-variant shrink-0">09:15 AM</div>
+<div class="leading-tight">
+<p class="font-bold text-body-sm">Rechazo Automático</p>
+<p class="text-xs text-on-surface-variant">Documento INE ilegible en expediente MENS940822.</p>
+</div>
+</div>
+<div class="flex gap-md border-l-2 border-outline pl-md py-xs">
+<div class="text-[11px] font-mono text-on-surface-variant shrink-0">08:00 AM</div>
+<div class="leading-tight">
+<p class="font-bold text-body-sm">Inicio de Jornada</p>
+<p class="text-xs text-on-surface-variant">Sincronización de base de datos RENAPO completada.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

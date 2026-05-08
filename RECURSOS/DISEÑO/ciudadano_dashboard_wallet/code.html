@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#687688",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#64d9c9",
+                    "secondary-fixed-dim": "#ffb59f",
+                    "on-tertiary-fixed": "#0f1c2c",
+                    "on-secondary-fixed-variant": "#822709",
+                    "outline": "#6d7a77",
+                    "surface-tint": "#006a60",
+                    "outline-variant": "#bcc9c6",
+                    "on-primary-container": "#f4fffb",
+                    "on-tertiary-fixed-variant": "#3a4859",
+                    "background": "#f8fafa",
+                    "on-background": "#191c1d",
+                    "secondary-fixed": "#ffdbd1",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#3b0a00",
+                    "on-surface-variant": "#3d4947",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#82f6e5",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#00685e",
+                    "inverse-primary": "#64d9c9",
+                    "surface-container-high": "#e6e8e9",
+                    "surface-container-highest": "#e1e3e3",
+                    "tertiary": "#505d6f",
+                    "inverse-on-surface": "#eff1f1",
+                    "on-tertiary-container": "#fdfcff",
+                    "tertiary-fixed-dim": "#bac8dc",
+                    "on-primary-fixed": "#00201c",
+                    "surface-container": "#eceeee",
+                    "surface-variant": "#e1e3e3",
+                    "secondary-container": "#fe825e",
+                    "tertiary-fixed": "#d6e4f9",
+                    "surface-bright": "#f8fafa",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#721c00",
+                    "on-primary-fixed-variant": "#005048",
+                    "secondary": "#a23e1f",
+                    "inverse-surface": "#2e3131",
+                    "surface-dim": "#d8dada",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f2f4f4",
+                    "primary-container": "#008377",
+                    "surface": "#f8fafa",
+                    "on-surface": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "1rem",
+                    "lg": "1.5rem",
+                    "sm": "0.5rem",
+                    "xl": "2.5rem",
+                    "xs": "0.25rem",
+                    "base": "4px",
+                    "2xl": "4rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "mono": ["JetBrains Mono"],
+                    "h2": ["Inter"],
+                    "h3": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "h1": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f8fafa; -webkit-tap-highlight-color: transparent; }
+        .mobile-frame { max-width: 600px; margin: 0 auto; min-height: 100vh; position: relative; padding-bottom: 100px; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md text-on-surface bg-background">
+<div class="mobile-frame bg-surface shadow-sm">
+<!-- TopAppBar (Mapped from JSON) -->
+<header class="bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex justify-between items-center w-full px-lg h-16 sticky top-0 z-50 transition-colors duration-200">
+<div class="flex items-center gap-md">
+<span class="font-h3 text-h3 text-primary dark:text-primary-fixed-dim font-bold">TOJ Platform</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest p-sm rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="relative">
+<img alt="Juan" class="w-10 h-10 rounded-full border-2 border-primary" data-alt="A professional close-up portrait of a friendly man with a warm smile, set against a blurred modern architectural background with soft daylight. The image has a clean, high-trust aesthetic with a jade-green color tone subtlely integrated into the lighting to match a professional government app's branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVFP9CeG-XpqzMXsrwfvilqiDlxuVzC9KymHWfUGzquVnmnzAZ6erxVXL2a8VF8MwZc74VpQ8XwBgw_V4fuzU-fpO-owtsetxqOHHvRxUvbhU7rDEzjuxc2YXsXuQmwWQek3tbEKqfzMGHkVu8XGN3Wos6kw8yAPIOJ6kDr-El2m8lrU06e0pUkMCPgOWKngeaHxW66yIMGtcf6-y32U9WXUMnKsLIzyYgpEk7LliXC2tRA-Sd3CZLKXNtDopCmpzvjvXQ5G4hfPWv"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white text-[8px] px-1 rounded-full border-2 border-surface font-bold">KYC</div>
+</div>
+</div>
+</header>
+<main class="px-lg pt-lg space-y-xl">
+<!-- Greeting -->
+<section class="space-y-xs">
+<h2 class="text-h3 font-h3 text-on-surface">Hola, Juan</h2>
+<div class="flex items-center gap-xs text-primary font-bold bg-primary-fixed/30 w-fit px-sm py-xs rounded-lg">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-label-caps font-label-caps">KYC Verificado</span>
+</div>
+</section>
+<!-- Wallet Section (Citizen Styling) -->
+<section class="space-y-md">
+<h3 class="font-h3 text-body-lg font-semibold text-on-surface-variant">Mi Wallet</h3>
+<div class="bg-primary rounded-xl p-lg text-on-primary shadow-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/20 rounded-full -mr-16 -mt-16"></div>
+<div class="relative z-10 space-y-md">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps opacity-90">Saldo Wallet</span>
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<div class="text-h2 font-h2">$500.00</div>
+<div class="pt-md border-t border-on-primary/20 space-y-xs">
+<div class="text-label-caps font-label-caps opacity-80 uppercase tracking-widest">CLABE TOJ</div>
+<div class="font-mono text-body-sm tracking-tighter">646180 5000 0123 4567 89</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Obligations Section -->
+<section class="space-y-md">
+<div class="flex justify-between items-center">
+<h3 class="font-h3 text-body-lg font-semibold text-on-surface-variant">Obligaciones Pendientes</h3>
+<button class="text-primary text-body-sm font-semibold">Ver todo</button>
+</div>
+<div class="space-y-md">
+<!-- Urgent Obligation Card -->
+<div class="bg-white border-2 border-secondary/20 rounded-xl p-lg shadow-sm">
+<div class="flex justify-between items-start mb-md">
+<div class="space-y-xs">
+<div class="flex items-center gap-xs text-secondary font-bold">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+<span class="text-label-caps font-label-caps uppercase">Urgente</span>
+</div>
+<h4 class="font-h3 text-body-md font-bold text-on-surface">Predial 2026 - Zongolica</h4>
+<p class="text-secondary font-bold text-h3">$2,500.00</p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-lg">
+<span class="text-secondary text-body-sm font-medium">Vence en 3 días</span>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-xl font-bold text-body-sm shadow-md hover:bg-primary-container transition-colors">
+                                Pagar ahora
+                            </button>
+</div>
+</div>
+<!-- Paid Obligation Card -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-lg flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">assignment</span>
+</div>
+<div class="space-y-xs">
+<h4 class="font-body-md font-semibold text-on-surface">Licencia de Funcionamiento</h4>
+<div class="flex items-center gap-xs text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-body-sm">Pagado</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Digital Documents Preview -->
+<section class="space-y-md">
+<h3 class="font-h3 text-body-lg font-semibold text-on-surface-variant">Carpeta Digital</h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="bg-white border border-outline-variant p-md rounded-xl flex flex-col items-center gap-sm text-center">
+<span class="material-symbols-outlined text-primary text-[32px]">badge</span>
+<span class="text-body-sm font-semibold">INE Digital</span>
+</div>
+<div class="bg-white border border-outline-variant p-md rounded-xl flex flex-col items-center gap-sm text-center">
+<span class="material-symbols-outlined text-primary text-[32px]">directions_car</span>
+<span class="text-body-sm font-semibold">Licencia</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</button>
+<!-- BottomNavBar (Mapped from JSON) -->
+<nav class="bg-surface-container-lowest dark:bg-surface-container-low shadow-lg docked full-width bottom-0 rounded-t-xl fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm pb-sm h-20">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-full px-4 py-1 hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps">Wallet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Payments</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-caps text-label-caps">Assistant</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+</div>
+</body></html>

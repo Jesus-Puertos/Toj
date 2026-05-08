@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#687688",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#64d9c9",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-tertiary-fixed": "#0f1c2c",
+                        "on-secondary-fixed-variant": "#822709",
+                        "outline": "#6d7a77",
+                        "surface-tint": "#006a60",
+                        "outline-variant": "#bcc9c6",
+                        "on-primary-container": "#f4fffb",
+                        "on-tertiary-fixed-variant": "#3a4859",
+                        "background": "#f8fafa",
+                        "on-background": "#191c1d",
+                        "secondary-fixed": "#ffdbd1",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#3b0a00",
+                        "on-surface-variant": "#3d4947",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#82f6e5",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#00685e",
+                        "inverse-primary": "#64d9c9",
+                        "surface-container-high": "#e6e8e9",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary": "#505d6f",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-container": "#fdfcff",
+                        "tertiary-fixed-dim": "#bac8dc",
+                        "on-primary-fixed": "#00201c",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "secondary-container": "#fe825e",
+                        "tertiary-fixed": "#d6e4f9",
+                        "surface-bright": "#f8fafa",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#721c00",
+                        "on-primary-fixed-variant": "#005048",
+                        "secondary": "#a23e1f",
+                        "inverse-surface": "#2e3131",
+                        "surface-dim": "#d8dada",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f2f4f4",
+                        "primary-container": "#008377",
+                        "surface": "#f8fafa",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "1rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "xl": "2.5rem",
+                        "xs": "0.25rem",
+                        "base": "4px",
+                        "2xl": "4rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "mono": ["JetBrains Mono"],
+                        "h2": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrolling-content::-webkit-scrollbar {
+            display: none;
+        }
+        .scrolling-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-high flex items-center justify-center min-h-screen p-md">
+<!-- Mobile Device Simulation Container -->
+<div class="relative w-full max-w-md h-[800px] bg-background shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-[3rem] border-[8px] border-on-surface overflow-hidden flex flex-col">
+<!-- TopAppBar (Mapped from Shared Component) -->
+<header class="bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex justify-between items-center w-full px-lg h-16 shrink-0">
+<h1 class="text-h3 font-h3 text-primary dark:text-primary-fixed-dim">TOJ Platform</h1>
+<div class="flex gap-sm">
+<button class="text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-200 p-xs rounded-full">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Main Content (Onboarding Canvas) -->
+<main class="flex-grow flex flex-col px-lg pt-md overflow-y-auto scrolling-content pb-xl">
+<!-- Stepper Component -->
+<nav class="mb-xl">
+<div class="flex items-center justify-between relative">
+<!-- Progress Line Background -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-outline-variant -translate-y-1/2 z-0"></div>
+<!-- Active Progress Line -->
+<div class="absolute top-1/2 left-0 w-1/4 h-[2px] bg-primary -translate-y-1/2 z-0"></div>
+<!-- Step 1 (Active) -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-label-caps font-label-caps">1</div>
+<span class="text-label-caps font-label-caps text-primary">Identidad</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center text-label-caps font-label-caps border border-outline-variant">2</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Domicilio</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center text-label-caps font-label-caps border border-outline-variant">3</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Finalizar</span>
+</div>
+</div>
+</nav>
+<!-- Onboarding Hero -->
+<div class="text-center mb-lg">
+<h2 class="text-h3 font-h3 text-on-surface mb-xs">Verifica tu Identidad</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Centra tu rostro para la prueba de vida.</p>
+</div>
+<!-- Biometric Area (Bento-style focused card) -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-md mb-lg flex flex-col items-center border border-outline-variant">
+<div class="relative w-64 h-64 rounded-full border-4 border-primary p-1 overflow-hidden bg-surface-container">
+<!-- Circular Camera Viewport -->
+<div class="w-full h-full rounded-full overflow-hidden relative">
+<img alt="Live Camera Feed" class="w-full h-full object-cover" data-alt="A close-up portrait of a serene person positioned within a circular camera frame for a high-tech biometric identification process. The background is a soft, neutral office setting with high-key lighting. The overall aesthetic is professional and secure, featuring the brand's jade-green primary accents as a glowing ring around the portrait. The lighting is balanced to emphasize facial features for digital verification." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDofmc90rTbkka9_XHsefwuaC0054RFad5EIMbB8ika0v4Qj4xL_R1h-JlD5rzAZn4aH0NRPTIsgvdHgBx_Zud8AH7cV36VOkoWLh3xyOVKF2llQjMnK3zYqQKuHRPhwlDlgKmKR7kWnikIguRDtuxU7XvpXpfuePYht-1Cmlxw6uopP9QE9eXFZz71bvSrAvQJJMYI3OJp3QK6-SES4saxwhmoqJK9g7jWAMZQtwxV_epZ3dCbcZITAivmd8DileaQeoP-rCCCFDlY"/>
+<!-- Scanning Overlay Effect -->
+<div class="absolute top-0 left-0 w-full h-[2px] bg-primary/40 shadow-[0_0_15px_rgba(0,104,94,0.8)] translate-y-24"></div>
+</div>
+</div>
+<button class="mt-xl w-full bg-primary text-on-primary font-h3 py-md rounded-xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">photo_camera</span>
+                    Tomar Selfie
+                </button>
+</div>
+<!-- INE Dropzone -->
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl p-lg flex flex-col items-center justify-center text-center gap-md cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary text-[48px]">badge</span>
+<div>
+<p class="text-body-md font-body-md text-on-surface font-semibold">Fotografía de INE / Pasaporte</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Asegúrate que sea legible y sin reflejos</p>
+</div>
+<div class="bg-primary-fixed text-on-primary-fixed px-md py-xs rounded-full text-label-caps font-label-caps">SUBIR ARCHIVO</div>
+</div>
+<!-- Success State (Floating Modal Simulation) -->
+<div class="mt-xl bg-white border border-primary/20 rounded-xl p-lg shadow-xl flex items-center gap-lg">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(0,104,94,0.3)]">
+<span class="material-symbols-outlined text-white text-[32px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="text-body-md font-body-md text-primary font-bold">Validación RENAPO Exitosa</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Tus datos han sido confirmados oficialmente.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mapped from Shared Component) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm pb-sm h-20 bg-surface-container-lowest dark:bg-surface-container-low shadow-md rounded-t-xl shrink-0">
+<!-- Wallet -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps">Wallet</span>
+</a>
+<!-- Payments -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Payments</span>
+</a>
+<!-- Assistant -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-caps text-label-caps">Assistant</span>
+</a>
+<!-- Profile (Active as it's Identity context) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-full px-4 py-1 hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+<!-- Device Indicator Bar -->
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-on-surface-variant/30 rounded-full z-50"></div>
+</div>
+</body></html>

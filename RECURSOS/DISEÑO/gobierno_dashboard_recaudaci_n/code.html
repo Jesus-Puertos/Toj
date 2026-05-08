@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#687688",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#64d9c9",
+                    "secondary-fixed-dim": "#ffb59f",
+                    "on-tertiary-fixed": "#0f1c2c",
+                    "on-secondary-fixed-variant": "#822709",
+                    "outline": "#6d7a77",
+                    "surface-tint": "#006a60",
+                    "outline-variant": "#bcc9c6",
+                    "on-primary-container": "#f4fffb",
+                    "on-tertiary-fixed-variant": "#3a4859",
+                    "background": "#f8fafa",
+                    "on-background": "#191c1d",
+                    "secondary-fixed": "#ffdbd1",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#3b0a00",
+                    "on-surface-variant": "#3d4947",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#82f6e5",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#00685e",
+                    "inverse-primary": "#64d9c9",
+                    "surface-container-high": "#e6e8e9",
+                    "surface-container-highest": "#e1e3e3",
+                    "tertiary": "#505d6f",
+                    "inverse-on-surface": "#eff1f1",
+                    "on-tertiary-container": "#fdfcff",
+                    "tertiary-fixed-dim": "#bac8dc",
+                    "on-primary-fixed": "#00201c",
+                    "surface-container": "#eceeee",
+                    "surface-variant": "#e1e3e3",
+                    "secondary-container": "#fe825e",
+                    "tertiary-fixed": "#d6e4f9",
+                    "surface-bright": "#f8fafa",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#721c00",
+                    "on-primary-fixed-variant": "#005048",
+                    "secondary": "#a23e1f",
+                    "inverse-surface": "#2e3131",
+                    "surface-dim": "#d8dada",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f2f4f4",
+                    "primary-container": "#008377",
+                    "surface": "#f8fafa",
+                    "on-surface": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "1rem",
+                    "lg": "1.5rem",
+                    "sm": "0.5rem",
+                    "xl": "2.5rem",
+                    "xs": "0.25rem",
+                    "base": "4px",
+                    "2xl": "4rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "mono": ["JetBrains Mono"],
+                    "h2": ["Inter"],
+                    "h3": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "h1": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #f8fafa; }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Main Layout Shell -->
+<div class="flex min-h-screen overflow-hidden">
+<!-- Sidebar Navigation (SideNavBar JSON implementation) -->
+<aside class="fixed left-0 top-0 h-full w-60 bg-surface-container-high border-r border-outline-variant flex flex-col h-full py-md px-sm">
+<div class="px-md py-lg mb-md">
+<h1 class="font-h3 text-primary">TOJ Admin</h1>
+<p class="text-body-sm text-on-surface-variant font-body-sm">Revenue Department</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<!-- Dashboard Active State -->
+<a class="flex items-center gap-md px-md py-sm text-primary font-bold bg-surface-bright transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-body-sm font-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dataset">dataset</span>
+<span class="text-body-sm font-body-sm">ETL Module</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="text-body-sm font-body-sm">KYC Audit</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="text-body-sm font-body-sm">Reconciliation</span>
+</a>
+</nav>
+<div class="mt-auto space-y-xs">
+<button class="w-full text-left flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-body-sm font-body-sm">Settings</span>
+</button>
+<button class="w-full text-left flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-body-sm font-body-sm">Logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-60 flex flex-col min-h-screen">
+<!-- TopAppBar Implementation -->
+<header class="flex justify-between items-center w-full px-lg h-16 bg-surface border-b border-outline-variant font-body-md text-body-md sticky top-0 z-10">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary pl-10 py-xs text-body-sm" placeholder="Buscar transacciones, FOLIO o ciudadanos..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative cursor-pointer hover:bg-surface-container transition-colors p-xs rounded">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</div>
+<div class="h-8 w-px bg-outline-variant mx-sm"></div>
+<div class="flex items-center gap-sm">
+<div class="text-right hidden xl:block">
+<p class="font-bold text-body-sm text-primary">Tesorería Municipal</p>
+<p class="text-xs text-on-surface-variant">Admin Level 4</p>
+</div>
+<img alt="Tesorería Profile" class="w-10 h-10 rounded object-cover border border-outline-variant" data-alt="A professional headshot of a government official in a sharp navy suit, clean studio background with soft grey tones. The lighting is bright and even, conveying trust and institutional authority. High definition photography style consistent with a modern corporate identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9wv9R7YyOYJngGKHoPS18WznbrylCH1fa0SuTRYTkzrK9cXqP9k7KMokap0lSBa5U9V9vRaW4tQgD4WEBiuTV2QJ7XBcxJtiyfyrJGSVWA89013WdFv26dXUW_4sW2GIFjBIH34KBjo3OM0JOyR8OC8xL68nXjlFV0CvEE-FYsNBPvvSZ5AwrejRK-N5x4xt_eSIS7s5v9rb08MKN4-ejUIHWygH38dVJyBLj10eNB6qJ0czOF3C_GCuNw43MgetrYny7_33oQYDC"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 p-lg gap-lg">
+<!-- Dashboard Canvas -->
+<div class="flex-[3] space-y-lg">
+<!-- KPI Cards (Shadcn style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">Ingresos Hoy</span>
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<div class="text-h3 font-h3">+$45,000</div>
+<div class="flex items-center gap-xs text-primary text-xs font-bold mt-xs">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+                                12.5% vs ayer
+                            </div>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">Pagos Conciliados</span>
+<span class="material-symbols-outlined text-primary" data-icon="rebase_edit">rebase_edit</span>
+</div>
+<div class="text-h3 font-h3">142</div>
+<p class="text-xs text-on-surface-variant mt-xs">98% del total recibido</p>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-body-sm text-on-surface-variant uppercase tracking-wider font-semibold">Trámites Vencidos</span>
+<span class="material-symbols-outlined text-secondary" data-icon="event_busy">event_busy</span>
+</div>
+<div class="text-h3 font-h3 text-secondary">89</div>
+<div class="flex items-center gap-xs text-secondary text-xs font-bold mt-xs">
+<span class="material-symbols-outlined text-sm" data-icon="priority_high">priority_high</span>
+                                Requiere atención inmediata
+                            </div>
+</div>
+</div>
+<!-- Main Chart Section -->
+<div class="bg-white border border-outline-variant rounded p-lg shadow-sm">
+<div class="flex justify-between items-center mb-xl">
+<div>
+<h2 class="text-h3 font-h3">Recaudación Semanal</h2>
+<p class="text-on-surface-variant text-body-sm">Histórico de ingresos comparativo por ramo impositivo</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-xs text-xs font-bold border border-outline-variant rounded hover:bg-surface-container transition-colors">Exportar CSV</button>
+<button class="px-md py-xs text-xs font-bold bg-primary text-on-primary rounded hover:opacity-90 transition-opacity">Ver Detalle</button>
+</div>
+</div>
+<!-- Bar Chart Simulation -->
+<div class="h-80 w-full flex items-end gap-md pb-md border-b border-outline-variant">
+<!-- Mon -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-primary-container h-32 rounded-t transition-all hover:brightness-90 cursor-help" title="Lunes: $32k"></div>
+<span class="text-xs font-mono text-on-surface-variant">LUN</span>
+</div>
+<!-- Tue -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-primary-container h-48 rounded-t transition-all hover:brightness-90 cursor-help" title="Martes: $48k"></div>
+<span class="text-xs font-mono text-on-surface-variant">MAR</span>
+</div>
+<!-- Wed -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-primary-container h-64 rounded-t transition-all hover:brightness-90 cursor-help" title="Miércoles: $64k"></div>
+<span class="text-xs font-mono text-on-surface-variant">MIE</span>
+</div>
+<!-- Thu -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-primary-container h-40 rounded-t transition-all hover:brightness-90 cursor-help" title="Jueves: $40k"></div>
+<span class="text-xs font-mono text-on-surface-variant">JUE</span>
+</div>
+<!-- Fri -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-primary-container h-72 rounded-t transition-all hover:brightness-90 cursor-help" title="Viernes: $72k"></div>
+<span class="text-xs font-mono text-on-surface-variant">VIE</span>
+</div>
+<!-- Sat -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-surface-container-highest h-20 rounded-t transition-all hover:brightness-90 cursor-help" title="Sábado: $20k"></div>
+<span class="text-xs font-mono text-on-surface-variant">SAB</span>
+</div>
+<!-- Sun -->
+<div class="flex-1 flex flex-col items-center gap-sm">
+<div class="w-full bg-surface-container-highest h-12 rounded-t transition-all hover:brightness-90 cursor-help" title="Domingo: $12k"></div>
+<span class="text-xs font-mono text-on-surface-variant">DOM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Feed -->
+<aside class="flex-1 space-y-md">
+<div class="bg-white border border-outline-variant rounded shadow-sm h-full flex flex-col">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="text-body-sm font-bold uppercase tracking-widest text-primary">Últimos eventos n8n</h3>
+<span class="material-symbols-outlined text-sm text-primary" data-icon="sync">sync</span>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-md">
+<!-- Feed Item -->
+<div class="flex gap-md border-l-2 border-primary-container pl-md py-xs">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="send">send</span>
+</div>
+<div>
+<p class="text-body-sm font-bold">Telegram enviado a Juan P.</p>
+<p class="text-xs text-on-surface-variant">Recordatorio de pago predial generado automáticamente por webhook.</p>
+<p class="text-[10px] font-mono mt-xs text-outline italic">Hace 2 mins</p>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex gap-md border-l-2 border-primary-container pl-md py-xs">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<p class="text-body-sm font-bold">Conciliación STP Exitosa</p>
+<p class="text-xs text-on-surface-variant">Lote #9822 procesado. 45 transacciones validadas contra banco.</p>
+<p class="text-[10px] font-mono mt-xs text-outline italic">Hace 15 mins</p>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex gap-md border-l-2 border-secondary pl-md py-xs">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="error">error</span>
+</div>
+<div>
+<p class="text-body-sm font-bold text-secondary">Fallo de API - Catastro</p>
+<p class="text-xs text-on-surface-variant">Reintento programado para sincronización de claves catastrales.</p>
+<p class="text-[10px] font-mono mt-xs text-outline italic">Hace 1 hora</p>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex gap-md border-l-2 border-primary-container pl-md py-xs">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="mail">mail</span>
+</div>
+<div>
+<p class="text-body-sm font-bold">Email Masivo Completado</p>
+<p class="text-xs text-on-surface-variant">Campaña "Descuento Enero" enviada a 1,200 contribuyentes.</p>
+<p class="text-[10px] font-mono mt-xs text-outline italic">Hace 3 horas</p>
+</div>
+</div>
+</div>
+<div class="p-md bg-surface-container-low border-t border-outline-variant">
+<button class="w-full text-center text-xs font-bold text-primary hover:underline">Ver todo el log de procesos</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</body></html>

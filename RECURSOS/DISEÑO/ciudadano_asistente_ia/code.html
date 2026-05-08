@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#687688",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#64d9c9",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-tertiary-fixed": "#0f1c2c",
+                        "on-secondary-fixed-variant": "#822709",
+                        "outline": "#6d7a77",
+                        "surface-tint": "#006a60",
+                        "outline-variant": "#bcc9c6",
+                        "on-primary-container": "#f4fffb",
+                        "on-tertiary-fixed-variant": "#3a4859",
+                        "background": "#f8fafa",
+                        "on-background": "#191c1d",
+                        "secondary-fixed": "#ffdbd1",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#3b0a00",
+                        "on-surface-variant": "#3d4947",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#82f6e5",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#00685e",
+                        "inverse-primary": "#64d9c9",
+                        "surface-container-high": "#e6e8e9",
+                        "surface-container-highest": "#e1e3e3",
+                        "tertiary": "#505d6f",
+                        "inverse-on-surface": "#eff1f1",
+                        "on-tertiary-container": "#fdfcff",
+                        "tertiary-fixed-dim": "#bac8dc",
+                        "on-primary-fixed": "#00201c",
+                        "surface-container": "#eceeee",
+                        "surface-variant": "#e1e3e3",
+                        "secondary-container": "#fe825e",
+                        "tertiary-fixed": "#d6e4f9",
+                        "surface-bright": "#f8fafa",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#721c00",
+                        "on-primary-fixed-variant": "#005048",
+                        "secondary": "#a23e1f",
+                        "inverse-surface": "#2e3131",
+                        "surface-dim": "#d8dada",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f2f4f4",
+                        "primary-container": "#008377",
+                        "surface": "#f8fafa",
+                        "on-surface": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "1rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "xl": "2.5rem",
+                        "xs": "0.25rem",
+                        "base": "4px",
+                        "2xl": "4rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "mono": ["JetBrains Mono"],
+                        "h2": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "mono": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .chat-container {
+            height: calc(100vh - 160px);
+            scrollbar-width: thin;
+            scrollbar-color: #bcc9c6 transparent;
+        }
+        .chat-bubble-ai {
+            border-bottom-left-radius: 4px;
+        }
+        .chat-bubble-user {
+            border-bottom-right-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex justify-between items-center w-full px-lg h-16 fixed top-0 z-50">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+<div>
+<h1 class="text-h3 font-h3 text-primary dark:text-primary-fixed-dim m-0">TOJ Assistant (IA)</h1>
+<p class="text-[10px] text-primary uppercase tracking-widest font-bold">En línea • Ciudadano</p>
+</div>
+</div>
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="info">info</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-16 pb-36 px-md max-w-[600px] mx-auto w-full chat-container overflow-y-auto bg-background">
+<!-- Date Marker -->
+<div class="flex justify-center my-lg">
+<span class="bg-surface-container-high text-on-surface-variant px-md py-xs rounded-full font-label-caps text-label-caps">HOY</span>
+</div>
+<!-- AI Message Bubble -->
+<div class="flex flex-col items-start mb-lg max-w-[85%]">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-on-primary-container" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOJ Assistant</span>
+</div>
+<div class="bg-surface-container-lowest dark:bg-surface-container-low p-md rounded-xl shadow-md chat-bubble-ai border border-outline-variant/30">
+<p class="text-body-md text-on-surface">¡Hola! Veo que tu predial vence pronto. Si ahorras $200 a la semana desde tu wallet, lo cubres sin recargos. ¿Te creo una meta de ahorro?</p>
+<div class="mt-xs flex justify-end">
+<span class="text-[10px] text-on-surface-variant">09:41 AM</span>
+</div>
+</div>
+<!-- Contextual Suggestion Cards -->
+<div class="flex gap-sm mt-md overflow-x-auto pb-sm w-full no-scrollbar">
+<button class="bg-primary text-on-primary px-lg py-sm rounded-full text-body-sm font-semibold whitespace-nowrap shadow-md hover:bg-primary-container transition-colors">
+                    Sí, crear meta
+                </button>
+<button class="bg-surface-container-highest text-on-surface-variant px-lg py-sm rounded-full text-body-sm font-semibold whitespace-nowrap hover:bg-surface-container-high transition-colors">
+                    Ver detalles predial
+                </button>
+<button class="bg-surface-container-highest text-on-surface-variant px-lg py-sm rounded-full text-body-sm font-semibold whitespace-nowrap hover:bg-surface-container-high transition-colors">
+                    Luego
+                </button>
+</div>
+</div>
+<!-- User Message Bubble (Example for UI richness) -->
+<div class="flex flex-col items-end mb-lg ml-auto max-w-[85%]">
+<div class="bg-primary text-on-primary p-md rounded-xl shadow-md chat-bubble-user">
+<p class="text-body-md">¿Cuánto debo en total este año?</p>
+<div class="mt-xs flex justify-end items-center gap-xs">
+<span class="text-[10px] opacity-80">09:42 AM</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="done_all">done_all</span>
+</div>
+</div>
+</div>
+<!-- AI Dynamic Data Card -->
+<div class="flex flex-col items-start mb-lg max-w-[90%]">
+<div class="bg-surface-container-lowest dark:bg-surface-container-low p-md rounded-xl shadow-md chat-bubble-ai border border-outline-variant/30 w-full">
+<div class="flex items-center gap-md mb-md">
+<div class="p-sm bg-secondary-container rounded-lg">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Impuesto Predial 2024</h4>
+<p class="text-body-sm text-on-surface-variant">ID: PRD-9920-X</p>
+</div>
+</div>
+<div class="space-y-sm mb-md">
+<div class="flex justify-between border-b border-outline-variant pb-xs">
+<span class="text-on-surface-variant text-body-sm">Monto Base</span>
+<span class="font-mono font-bold">$2,400.00</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant pb-xs">
+<span class="text-on-surface-variant text-body-sm">Descuento Pronto Pago</span>
+<span class="text-primary font-mono font-bold">-$480.00</span>
+</div>
+<div class="flex justify-between pt-xs">
+<span class="font-bold text-on-surface">Total a Pagar</span>
+<span class="text-h3 font-h3 text-primary">$1,920.00</span>
+</div>
+</div>
+<div class="p-sm bg-primary-fixed-dim/20 rounded-lg flex gap-md items-start">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<p class="text-body-sm text-on-primary-fixed-variant">Ahorrando <strong>$200 semanales</strong>, liquidarás tu deuda en 10 semanas, justo antes del vencimiento.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Chat Input Area (Replaces FAB for this context) -->
+<div class="fixed bottom-20 left-0 w-full bg-surface-container-lowest dark:bg-surface-container-low px-md py-sm flex items-center gap-sm border-t border-outline-variant/30 z-50">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<div class="flex-1 relative">
+<input class="w-full bg-surface-container-low border-none rounded-full px-lg py-md text-body-md focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none" placeholder="Escribe un mensaje..." type="text"/>
+</div>
+<button class="w-12 h-12 flex items-center justify-center bg-primary text-on-primary rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="send" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm pb-sm h-20 bg-surface-container-lowest dark:bg-surface-container-low shadow-md rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps mt-xs">Wallet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-caps text-label-caps mt-xs">Payments</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container dark:bg-primary-fixed-dim dark:text-on-primary-fixed rounded-full px-4 py-1 hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-caps text-label-caps mt-xs">Assistant</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps mt-xs">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -3,13 +3,22 @@
 import { useState, useTransition } from "react";
 import { CameraCapture } from "@/components/ciudadano/kyc/CameraCapture";
 import { DocumentUpload } from "@/components/ciudadano/kyc/DocumentUpload";
-import { completarKyc } from "./actions";
+import { subirSelfieKyc, subirDocumentoKyc, completarKyc } from "./actions";
 
-// ── Stepper ──────────────────────────────────────────────────────────────────
+// ── Helper: dataURL → Blob ────────────────────────────────────────────────────
 
-type Paso = { numero: number; label: string; sublabel: string };
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [header, data] = dataUrl.split(",");
+  const mime = header.match(/:(.*?);/)?.[1] ?? "image/jpeg";
+  const bytes = atob(data);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
 
-const PASOS: Paso[] = [
+// ── Stepper ───────────────────────────────────────────────────────────────────
+
+const PASOS = [
   { numero: 1, label: "Identidad", sublabel: "Selfie + INE" },
   { numero: 2, label: "Domicilio", sublabel: "Comprobante" },
   { numero: 3, label: "Finalizar", sublabel: "Revisión" },
@@ -56,9 +65,7 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
           </div>
           {idx < PASOS.length - 1 && (
             <div
-              className={`flex-1 h-0.5 mx-2 mt-4 ${
-                pasoActual > paso.numero ? "bg-primary" : "bg-outline-variant"
-              }`}
+              className={`flex-1 h-0.5 mx-2 mt-4 ${pasoActual > paso.numero ? "bg-primary" : "bg-outline-variant"}`}
             />
           )}
         </div>
@@ -69,18 +76,27 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
 
 // ── Paso 1: Selfie ────────────────────────────────────────────────────────────
 
-function StepIdentidad({
-  onNext,
-  onCaptura,
-}: {
-  onNext: () => void;
-  onCaptura: (dataUrl: string) => void;
-}) {
-  const [selfie, setSelfie] = useState<string | null>(null);
+function StepIdentidad({ onNext }: { onNext: (selfieUrl: string) => void }) {
+  const [selfieDataUrl, setSelfieDataUrl] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
 
-  function handleCaptura(dataUrl: string) {
-    setSelfie(dataUrl);
-    onCaptura(dataUrl);
+  function handleContinuar() {
+    if (!selfieDataUrl) return;
+    setError("");
+    startTransition(async () => {
+      // Convertir el dataURL del canvas a Blob para enviarlo al servidor
+      const blob = dataUrlToBlob(selfieDataUrl);
+      const formData = new FormData();
+      formData.append("selfie", blob, "selfie.jpg");
+
+      const res = await subirSelfieKyc(formData);
+      if ("error" in res) {
+        setError(res.error);
+      } else {
+        onNext(res.url);
+      }
+    });
   }
 
   return (
@@ -98,40 +114,65 @@ function StepIdentidad({
         <p className="text-label-caps text-on-surface-variant font-bold tracking-widest mb-5 uppercase text-center">
           Posiciona tu rostro en el círculo
         </p>
-        <CameraCapture onCaptura={handleCaptura} />
+        <CameraCapture onCaptura={setSelfieDataUrl} />
       </div>
 
+      {error && (
+        <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm text-red-500 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[16px]">error</span>
+          {error}
+        </div>
+      )}
+
       <button
-        onClick={onNext}
-        disabled={!selfie}
+        onClick={handleContinuar}
+        disabled={!selfieDataUrl || isPending}
         className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors shadow-card disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <span
-          className="material-symbols-outlined text-[22px]"
-          style={{ fontVariationSettings: "'FILL' 1" }}
-        >
-          arrow_forward
-        </span>
-        Continuar
+        {isPending ? (
+          <>
+            <span className="material-symbols-outlined animate-spin text-[22px]">
+              progress_activity
+            </span>
+            Subiendo selfie…
+          </>
+        ) : (
+          <>
+            <span
+              className="material-symbols-outlined text-[22px]"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              arrow_forward
+            </span>
+            Continuar
+          </>
+        )}
       </button>
     </div>
   );
 }
 
-// ── Paso 2: Comprobante de domicilio ─────────────────────────────────────────
+// ── Paso 2: Comprobante de domicilio ──────────────────────────────────────────
 
-function StepDomicilio({
-  onNext,
-  onArchivo,
-}: {
-  onNext: () => void;
-  onArchivo: (file: File) => void;
-}) {
+function StepDomicilio({ onNext }: { onNext: (documentoUrl: string) => void }) {
   const [archivo, setArchivo] = useState<File | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
 
-  function handleArchivo(file: File) {
-    setArchivo(file);
-    onArchivo(file);
+  function handleContinuar() {
+    if (!archivo) return;
+    setError("");
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("documento", archivo);
+
+      const res = await subirDocumentoKyc(formData);
+      if ("error" in res) {
+        setError(res.error);
+      } else {
+        onNext(res.url);
+      }
+    });
   }
 
   return (
@@ -145,20 +186,38 @@ function StepDomicilio({
         </p>
       </div>
 
-      <DocumentUpload onArchivo={handleArchivo} />
+      <DocumentUpload onArchivo={setArchivo} />
+
+      {error && (
+        <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm text-red-500 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[16px]">error</span>
+          {error}
+        </div>
+      )}
 
       <button
-        onClick={onNext}
-        disabled={!archivo}
+        onClick={handleContinuar}
+        disabled={!archivo || isPending}
         className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors shadow-card disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <span
-          className="material-symbols-outlined text-[22px]"
-          style={{ fontVariationSettings: "'FILL' 1" }}
-        >
-          arrow_forward
-        </span>
-        Continuar
+        {isPending ? (
+          <>
+            <span className="material-symbols-outlined animate-spin text-[22px]">
+              progress_activity
+            </span>
+            Subiendo documento…
+          </>
+        ) : (
+          <>
+            <span
+              className="material-symbols-outlined text-[22px]"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              arrow_forward
+            </span>
+            Continuar
+          </>
+        )}
       </button>
     </div>
   );
@@ -166,28 +225,44 @@ function StepDomicilio({
 
 // ── Paso 3: Finalizar ─────────────────────────────────────────────────────────
 
-function StepFinalizar({ selfie }: { selfie: string | null }) {
+function StepFinalizar({
+  selfieUrl,
+  documentoUrl,
+}: {
+  selfieUrl: string | null;
+  documentoUrl: string | null;
+}) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
 
-  const handleCompletar = () => {
+  function handleCompletar() {
     setError("");
     startTransition(async () => {
-      const res = await completarKyc();
+      const res = await completarKyc({
+        selfieUrl: selfieUrl ?? undefined,
+        documentoUrl: documentoUrl ?? undefined,
+      });
       if (res && "error" in res) setError(res.error);
     });
-  };
+  }
+
+  const items = [
+    { label: "Selfie subida", done: !!selfieUrl },
+    { label: "Comprobante subido", done: !!documentoUrl },
+    { label: "Datos en revisión", done: false },
+  ];
 
   return (
     <div className="space-y-6 py-4">
-      {/* Selfie de confirmación */}
-      {selfie && (
+      {/* Selfie capturada (desde Storage, no dataURL local) */}
+      {selfieUrl && (
         <div className="flex justify-center">
           <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-primary shadow-lg">
             <img
-              src={selfie}
+              src={selfieUrl}
               alt="Tu selfie"
               className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
             />
             <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
               <span
@@ -211,26 +286,16 @@ function StepFinalizar({ selfie }: { selfie: string | null }) {
 
       {/* Checklist */}
       <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 space-y-3">
-        {[
-          { label: "Selfie capturada", done: !!selfie },
-          { label: "Comprobante subido", done: true },
-          { label: "Datos en revisión", done: false },
-        ].map((item) => (
+        {items.map((item) => (
           <div key={item.label} className="flex items-center gap-3">
             <span
-              className={`material-symbols-outlined text-[20px] ${
-                item.done ? "text-primary" : "text-outline"
-              }`}
+              className={`material-symbols-outlined text-[20px] ${item.done ? "text-primary" : "text-outline"}`}
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               {item.done ? "check_circle" : "radio_button_unchecked"}
             </span>
             <span
-              className={`text-body-sm ${
-                item.done
-                  ? "text-on-surface font-medium"
-                  : "text-on-surface-variant"
-              }`}
+              className={`text-body-sm ${item.done ? "text-on-surface font-medium" : "text-on-surface-variant"}`}
             >
               {item.label}
             </span>
@@ -277,11 +342,8 @@ function StepFinalizar({ selfie }: { selfie: string | null }) {
 
 export default function KycPage() {
   const [pasoActual, setPasoActual] = useState(1);
-  const [selfie, setSelfie] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [documento, setDocumento] = useState<File | null>(null);
-
-  const avanzar = () => setPasoActual((p) => Math.min(p + 1, 3));
+  const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
+  const [documentoUrl, setDocumentoUrl] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -298,12 +360,24 @@ export default function KycPage() {
         <Stepper pasoActual={pasoActual} />
 
         {pasoActual === 1 && (
-          <StepIdentidad onNext={avanzar} onCaptura={setSelfie} />
+          <StepIdentidad
+            onNext={(url) => {
+              setSelfieUrl(url);
+              setPasoActual(2);
+            }}
+          />
         )}
         {pasoActual === 2 && (
-          <StepDomicilio onNext={avanzar} onArchivo={setDocumento} />
+          <StepDomicilio
+            onNext={(url) => {
+              setDocumentoUrl(url);
+              setPasoActual(3);
+            }}
+          />
         )}
-        {pasoActual === 3 && <StepFinalizar selfie={selfie} />}
+        {pasoActual === 3 && (
+          <StepFinalizar selfieUrl={selfieUrl} documentoUrl={documentoUrl} />
+        )}
       </div>
     </div>
   );

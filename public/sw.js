@@ -33,7 +33,9 @@ self.addEventListener('activate', (event) => {
 // Fetch: network-first, fallback a caché para offline
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  if (new URL(event.request.url).pathname.startsWith('/api/')) return;
+  const pathname = new URL(event.request.url).pathname;
+  if (pathname.startsWith('/api/')) return;
+  if (pathname.startsWith('/_next/')) return;
 
   event.respondWith(
     fetch(event.request)

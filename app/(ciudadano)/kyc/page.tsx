@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState, useTransition, Suspense } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
+import { useSearchParams } from 'next/navigation';
 import { finalizarKyc } from './actions';
 
 type Paso = { numero: number; label: string; sublabel: string };
@@ -34,7 +35,26 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
   );
 }
 
-function StepIdentidad({ onNext }: { onNext: () => void }) {
+function StepIdentidad({
+  selfieFile,
+  onSelect,
+  onNext,
+}: {
+  selfieFile: File | null;
+  onSelect: (file: File) => void;
+  onNext: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handlePick = () => {
+    inputRef.current?.click();
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) onSelect(file);
+  };
+
   return (
     <div className="text-center">
       <h1 className="text-h2 font-bold text-on-surface">Verifica tu identidad</h1>
@@ -64,15 +84,59 @@ function StepIdentidad({ onNext }: { onNext: () => void }) {
           ))}
         </ul>
       </div>
-      <button onClick={onNext} className="w-full mt-6 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-card">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        capture="user"
+        onChange={handleChange}
+        className="hidden"
+      />
+      <button
+        type="button"
+        onClick={handlePick}
+        className="w-full mt-6 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-card"
+      >
         <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>camera_alt</span>
-        Tomar Selfie
+        {selfieFile ? 'Repetir selfie' : 'Tomar Selfie'}
+      </button>
+      {selfieFile && (
+        <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left text-body-sm text-on-surface">
+          Selfie cargada: <span className="font-semibold">{selfieFile.name}</span>
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={onNext}
+        disabled={!selfieFile}
+        className="w-full mt-4 bg-primary/20 text-on-surface rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+      >
+        Continuar
       </button>
     </div>
   );
 }
 
-function StepDomicilio({ onNext }: { onNext: () => void }) {
+function StepDomicilio({
+  comprobanteFile,
+  onSelect,
+  onNext,
+}: {
+  comprobanteFile: File | null;
+  onSelect: (file: File) => void;
+  onNext: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handlePick = () => {
+    inputRef.current?.click();
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) onSelect(file);
+  };
+
   return (
     <div className="text-center space-y-4">
       <h1 className="text-h2 font-bold text-on-surface">Comprobante de domicilio</h1>
@@ -82,12 +146,60 @@ function StepDomicilio({ onNext }: { onNext: () => void }) {
         <p className="text-body-sm text-on-surface-variant">Toca para subir archivo</p>
         <span className="text-label-caps text-outline font-bold tracking-wide">PDF, JPG o PNG — Máx. 5 MB</span>
       </div>
-      <button onClick={onNext} className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors">Continuar</button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,application/pdf"
+        onChange={handleChange}
+        className="hidden"
+      />
+      <button
+        type="button"
+        onClick={handlePick}
+        className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors"
+      >
+        {comprobanteFile ? 'Reemplazar archivo' : 'Subir archivo'}
+      </button>
+      {comprobanteFile && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left text-body-sm text-on-surface">
+          Archivo cargado: <span className="font-semibold">{comprobanteFile.name}</span>
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={onNext}
+        disabled={!comprobanteFile}
+        className="w-full bg-primary/20 text-on-surface rounded-2xl py-4 text-body-md font-bold hover:bg-primary/30 transition-colors disabled:opacity-50"
+      >
+        Continuar
+      </button>
     </div>
   );
 }
 
-function StepFinalizar() {
+function StepFinalizar({
+  enRevision,
+  selfieFile,
+  comprobanteFile,
+}: {
+  enRevision: boolean;
+  selfieFile: File | null;
+  comprobanteFile: File | null;
+}) {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState('');
+
+  const handleEnviar = () => {
+    setError('');
+    startTransition(async () => {
+      const formData = new FormData();
+      if (selfieFile) formData.append('selfie', selfieFile);
+      if (comprobanteFile) formData.append('comprobante', comprobanteFile);
+      const result = await finalizarKyc(formData);
+      if (result?.error) setError(result.error);
+    });
+  };
+
   return (
     <div className="text-center space-y-6 py-8">
       <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
@@ -105,18 +217,47 @@ function StepFinalizar() {
           </div>
         ))}
       </div>
-      <form action={finalizarKyc}>
-        <button type="submit" className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors">
-          Ir al Dashboard
+      {error && (
+        <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm text-red-400">{error}</div>
+      )}
+      {enRevision ? (
+        <Link
+          href={"/dashboard" as Route}
+          className="block w-full bg-primary/30 text-on-surface-variant rounded-2xl py-4 text-body-md font-bold cursor-not-allowed"
+          aria-disabled
+        >
+          En revisión — vuelve en 24 h
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={handleEnviar}
+          disabled={isPending || !selfieFile || !comprobanteFile}
+          className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {isPending ? (
+            <><span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span> Subiendo archivos...</>
+          ) : (
+            <><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>upload</span> Enviar documentos</>
+          )}
         </button>
-      </form>
+      )}
     </div>
   );
 }
 
-export default function KycPage() {
+function KycContent() {
   const [pasoActual, setPasoActual] = useState(1);
+  const [selfieFile, setSelfieFile] = useState<File | null>(null);
+  const [comprobanteFile, setComprobanteFile] = useState<File | null>(null);
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const enRevision = status === 'pendiente';
   const avanzar = () => setPasoActual((p) => Math.min(p + 1, 3));
+
+  useEffect(() => {
+    if (enRevision) setPasoActual(3);
+  }, [enRevision]);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -128,10 +269,40 @@ export default function KycPage() {
       </header>
       <div className="px-5 py-6">
         <Stepper pasoActual={pasoActual} />
-        {pasoActual === 1 && <StepIdentidad onNext={avanzar} />}
-        {pasoActual === 2 && <StepDomicilio onNext={avanzar} />}
-        {pasoActual === 3 && <StepFinalizar />}
+        {pasoActual === 1 && (
+          <StepIdentidad
+            selfieFile={selfieFile}
+            onSelect={setSelfieFile}
+            onNext={avanzar}
+          />
+        )}
+        {pasoActual === 2 && (
+          <StepDomicilio
+            comprobanteFile={comprobanteFile}
+            onSelect={setComprobanteFile}
+            onNext={avanzar}
+          />
+        )}
+        {pasoActual === 3 && (
+          <StepFinalizar
+            enRevision={enRevision}
+            selfieFile={selfieFile}
+            comprobanteFile={comprobanteFile}
+          />
+        )}
       </div>
     </div>
+  );
+}
+
+export default function KycPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-surface">
+        <span className="material-symbols-outlined animate-spin text-[32px] text-primary">progress_activity</span>
+      </div>
+    }>
+      <KycContent />
+    </Suspense>
   );
 }

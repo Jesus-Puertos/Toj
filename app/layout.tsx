@@ -40,12 +40,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className={`${manrope.variable} ${spaceGrotesk.variable} bg-toj-background font-sans text-toj-text`}>
         {children}
-        {/* Registro del Service Worker */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});})}`,
-          }}
-        />
+        {/* Registro del Service Worker solo en produccion */}
+        {process.env.NODE_ENV === 'production' && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});})}`,
+            }}
+          />
+        )}
       </body>
     </html>
   );

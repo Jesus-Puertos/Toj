@@ -27,6 +27,7 @@ BEGIN
 
   -- Opción A: Crear nuevo ciudadano (si no existe en el padrón)
   INSERT INTO public.ciudadanos (
+    id,
     nombre_completo,
     email,
     curp,
@@ -34,14 +35,19 @@ BEGIN
     cuenta_stp_clabe
   )
   VALUES (
+    v_auth_uid,
     'José Demo Usuario',         -- ← CAMBIAR al nombre real
     'jose@demo.toj.mx',          -- ← CAMBIAR al email real
     'DEMO000000HVZXXX00',        -- ← CAMBIAR al CURP real (opcional)
     'Pendiente',
     '646180500001299999'         -- CLABE única (puedes cambiarla)
   )
-  ON CONFLICT (email) DO UPDATE
-    SET nombre_completo = EXCLUDED.nombre_completo
+  ON CONFLICT (id) DO UPDATE
+    SET nombre_completo = EXCLUDED.nombre_completo,
+        email = EXCLUDED.email,
+        curp = EXCLUDED.curp,
+        estado_kyc = EXCLUDED.estado_kyc,
+        cuenta_stp_clabe = EXCLUDED.cuenta_stp_clabe
   RETURNING id INTO v_ciudadano_id;
 
   -- Registrar en usuarios_plataforma como CIUDADANO

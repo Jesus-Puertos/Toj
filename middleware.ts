@@ -50,42 +50,72 @@ export async function middleware(request: NextRequest) {
 
   const isKycRoute = path.startsWith('/kyc');
 
-  // Sin sesión → redirigir a login
-  if ((isProtectedCiudadano || isProtectedAdmin) && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    url.searchParams.set('redirect', path);
-    return NextResponse.redirect(url);
-  }
+  // ── Lógica de Redirección y Roles ───────────────────────────
+  const { data: profile } = user 
+    ? await supabase.from('usuarios_plataforma').select('tipo_usuario, ciudadano_id').eq('auth_user_id', user.id).maybeSingle()
+    : { data: null };
 
-  if (user && isProtectedCiudadano && !isKycRoute) {
-    const { data: usuario } = await supabase
-      .from('usuarios_plataforma')
-      .select('ciudadano_id')
-      .eq('auth_user_id', user.id)
-      .maybeSingle();
+  const tipoUsuario = profile?.tipo_usuario;
+  const ciudadanoId = profile?.ciudadano_id ?? user?.id;
 
-    const ciudadanoId = usuario?.ciudadano_id ?? user.id;
-
-    const { data: ciudadano } = await supabase
-      .from('ciudadanos')
-      .select('estado_kyc')
-      .eq('id', ciudadanoId)
-      .maybeSingle();
-
-    const estadoKyc = ciudadano?.estado_kyc ?? 'Pendiente';
-
-    if (estadoKyc !== 'Verificado') {
+  // 1. Protección de rutas de ADMINISTRACIÓN
+  if (isProtectedAdmin) {
+    if (!user) {
       const url = request.nextUrl.clone();
-      url.pathname = '/kyc';
+      url.pathname = '/login';
+      url.searchParams.set('redirect', path);
+      return NextResponse.redirect(url);
+    }
+    // Verificar que sea empleado de gobierno
+    if (tipoUsuario !== 'ADMIN_GOBIERNO' && tipoUsuario !== 'OPERADOR_GOBIERNO') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dashboard'; // Redirigir ciudadanos al dashboard
       return NextResponse.redirect(url);
     }
   }
 
-  // Con sesión en ruta auth → redirigir al dashboard
+  // 2. Protección de rutas de CIUDADANO
+  if (isProtectedCiudadano) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('redirect', path);
+      return NextResponse.redirect(url);
+    }
+    
+    // Evitar que admins entren al dashboard de ciudadano (opcional, pero limpio)
+    if (tipoUsuario === 'ADMIN_GOBIERNO' || tipoUsuario === 'OPERADOR_GOBIERNO') {
+      if (!path.startsWith('/admin')) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/admin';
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // 3. Validación de KYC (Solo para ciudadanos)
+    if (tipoUsuario === 'CIUDADANO' && !isKycRoute) {
+      const { data: ciudadano } = await supabase
+        .from('ciudadanos')
+        .select('estado_kyc')
+        .eq('id', ciudadanoId)
+        .maybeSingle();
+
+      const estadoKyc = ciudadano?.estado_kyc ?? 'Pendiente';
+
+      // Redirigir a KYC si está Pendiente o Rechazado
+      // Permitimos 'Verificado' y 'EnProceso' entrar al dashboard
+      if (estadoKyc === 'Pendiente' || estadoKyc === 'Rechazado') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/kyc';
+        return NextResponse.redirect(url);
+      }
+    }
+  }
+
+  // 4. Redirección si ya está autenticado (Login/Registro)
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone();
-    url.pathname = '/dashboard';
+    url.pathname = (tipoUsuario === 'ADMIN_GOBIERNO' || tipoUsuario === 'OPERADOR_GOBIERNO') ? '/admin' : '/dashboard';
     return NextResponse.redirect(url);
   }
 

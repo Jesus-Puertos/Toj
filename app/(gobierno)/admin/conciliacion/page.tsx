@@ -1,18 +1,55 @@
 import Link from 'next/link';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
-const pagos = [
-  { folio: 'PAG-2401', obligacion: 'Predial 2026', ciudadano: 'Juan Martinez', monto: '$2,500.00', estado: 'Conciliado' },
-  { folio: 'PAG-2402', obligacion: 'Agua Potable', ciudadano: 'Maria Lopez', monto: '$480.00', estado: 'Pendiente' },
-  { folio: 'PAG-2403', obligacion: 'Licencia Municipal', ciudadano: 'Carlos Perez', monto: '$1,200.00', estado: 'Observado' },
-];
+type PagoReal = {
+  id: string;
+  monto_transferido: number;
+  estado_conciliacion: string;
+  clave_rastreo_stp: string | null;
+  created_at: string;
+  obligaciones: {
+    tipo_tramite: string;
+  } | null;
+  ciudadanos: {
+    nombre_completo: string;
+  } | null;
+};
 
-const resumen = [
-  { label: 'Conciliados', value: '126' },
-  { label: 'Pendientes', value: '2' },
-  { label: 'Observados', value: '4' },
-];
+export default async function ConciliacionPage() {
+  const supabase = createSupabaseServerClient();
 
-export default function ConciliacionPage() {
+  // 1. Obtener estadísticas reales
+  const { data: stats } = await supabase
+    .from('pagos')
+    .select('estado_conciliacion');
+
+  const totalConciliados = stats?.filter(p => p.estado_conciliacion === 'Conciliado').length || 0;
+  const totalPendientes   = stats?.filter(p => p.estado_conciliacion === 'Pendiente').length || 0;
+  const totalObservados   = stats?.filter(p => p.estado_conciliacion === 'Observado').length || 0;
+
+  const resumen = [
+    { label: 'Conciliados', value: totalConciliados.toString(), color: 'text-emerald-400' },
+    { label: 'Pendientes', value: totalPendientes.toString(), color: 'text-amber-400' },
+    { label: 'Observados', value: totalObservados.toString(), color: 'text-toj-terracotta' },
+  ];
+
+  // 2. Obtener movimientos recientes con JOINs
+  const { data: pagosData } = await supabase
+    .from('pagos')
+    .select(`
+      id,
+      monto_transferido,
+      estado_conciliacion,
+      clave_rastreo_stp,
+      created_at,
+      obligaciones ( tipo_tramite ),
+      ciudadanos ( nombre_completo )
+    `)
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  const pagos = (pagosData as any[] ?? []) as PagoReal[];
+
   return (
     <main className="mx-auto max-w-6xl px-6 py-8 md:px-10 md:py-10">
       <div className="flex items-center justify-between gap-4">
@@ -29,7 +66,7 @@ export default function ConciliacionPage() {
         {resumen.map((item) => (
           <article key={item.label} className="rounded-3xl border border-white/10 bg-white/5 p-5">
             <p className="text-sm text-white/65">{item.label}</p>
-            <p className="mt-3 text-3xl font-semibold text-white">{item.value}</p>
+            <p className={`mt-3 text-3xl font-semibold ${item.color}`}>{item.value}</p>
           </article>
         ))}
       </section>
@@ -39,30 +76,43 @@ export default function ConciliacionPage() {
           <h2 className="text-lg font-semibold text-white">Movimientos recientes</h2>
         </div>
         <div className="divide-y divide-white/10">
-          {pagos.map((pago) => (
-            <article key={pago.folio} className="grid gap-3 px-5 py-4 md:grid-cols-[1.1fr_1.5fr_1fr_0.8fr] md:items-center">
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Folio</p>
-                <p className="mt-1 font-semibold text-white">{pago.folio}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Obligación / Ciudadano</p>
-                <p className="mt-1 text-sm text-white/85">{pago.obligacion}</p>
-                <p className="text-sm text-white/55">{pago.ciudadano}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Monto</p>
-                <p className="mt-1 font-semibold text-white">{pago.monto}</p>
-              </div>
-              <div className="md:text-right">
-                <span className="inline-flex rounded-full bg-toj-terracotta/15 px-3 py-1 text-xs font-semibold text-toj-terracotta-light">
-                  {pago.estado}
-                </span>
-              </div>
-            </article>
-          ))}
+          {pagos.length > 0 ? (
+            pagos.map((pago) => (
+              <article key={pago.id} className="grid gap-3 px-5 py-4 md:grid-cols-[1.1fr_1.5fr_1fr_0.8fr] md:items-center">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/45">Folio / STP</p>
+                  <p className="mt-1 font-semibold text-white">{pago.id.slice(0, 8).toUpperCase()}</p>
+                  <p className="text-[10px] font-mono text-white/30 truncate">{pago.clave_rastreo_stp || 'SIN CLAVE'}</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/45">Obligación / Ciudadano</p>
+                  <p className="mt-1 text-sm text-white/85 font-medium">{pago.obligaciones?.tipo_tramite ?? 'N/A'}</p>
+                  <p className="text-sm text-white/55">{pago.ciudadanos?.nombre_completo ?? 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/45">Monto</p>
+                  <p className="mt-1 font-semibold text-white">
+                    {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(pago.monto_transferido)}
+                  </p>
+                </div>
+                <div className="md:text-right">
+                  <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
+                    pago.estado_conciliacion === 'Conciliado' ? 'bg-emerald-500/10 text-emerald-400' :
+                    pago.estado_conciliacion === 'Pendiente' ? 'bg-amber-500/10 text-amber-400' :
+                    'bg-red-500/10 text-red-400'
+                  }`}>
+                    {pago.estado_conciliacion}
+                  </span>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className="py-12 text-center">
+              <p className="text-white/40 italic">No se han registrado pagos aún.</p>
+            </div>
+          )}
         </div>
       </section>
     </main>
   );
-}
+}

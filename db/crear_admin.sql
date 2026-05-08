@@ -11,15 +11,17 @@ DECLARE
 BEGIN
 
   -- 0. Crear la institución si no existe (independiente del seed)
-  INSERT INTO public.instituciones (id, nombre, municipio, estado_mexico, clave_inegi)
+  INSERT INTO public.instituciones (id, nombre_municipio, clave_municipal, contacto_email)
   VALUES (
     v_inst_id,
     'Municipio de Zongolica',
-    'Zongolica',
-    'Veracruz',
-    '30207'
+    '30207',
+    'contacto@toj.gob.mx'
   )
-  ON CONFLICT (id) DO NOTHING;
+  ON CONFLICT (id) DO UPDATE
+    SET nombre_municipio = EXCLUDED.nombre_municipio,
+        clave_municipal  = EXCLUDED.clave_municipal,
+        contacto_email   = EXCLUDED.contacto_email;
 
   -- 1. Registrar en usuarios_plataforma como ADMIN_GOBIERNO
   INSERT INTO public.usuarios_plataforma (

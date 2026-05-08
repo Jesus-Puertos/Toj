@@ -26,28 +26,61 @@ export default async function CiudadanoDashboardPage() {
     'Ciudadano';
   const iniciales = nombreCompleto.slice(0, 2).toUpperCase();
 
-  // ── Obligaciones reales (con fallback a mock si la tabla está vacía) ──
-  let obligaciones: Obligacion[] = MOCK_OBLIGACIONES;
+  // ── Obligaciones y Datos del Ciudadano reales ────────────────
+  let obligaciones: Obligacion[] = [];
+  let saldo = 0;
+  let clabe = 'Generando CLABE...';
+  let estadoKyc = 'Pendiente';
+
   if (user) {
+    // 1. Obtener el ciudadano_id vinculado al usuario de auth
     const { data: usuario } = await supabase
       .from('usuarios_plataforma')
       .select('ciudadano_id')
       .eq('auth_user_id', user.id)
       .maybeSingle();
 
-    const ciudadanoId = usuario?.ciudadano_id ?? user.id;
+    const ciudadanoId = usuario?.ciudadano_id;
 
-    const { data } = await supabase
-      .from('obligaciones')
-      .select('id, tipo_tramite, monto_total, fecha_vencimiento, estado_cumplimiento')
-      .eq('ciudadano_id', ciudadanoId)
-      .order('fecha_vencimiento', { ascending: true });
-    if (data && data.length > 0) obligaciones = data as Obligacion[];
+    if (ciudadanoId) {
+      // 2. Obtener datos del ciudadano (KYC, Saldo, CLABE)
+      const { data: ciudadano } = await supabase
+        .from('ciudadanos')
+        .select('estado_kyc, saldo_wallet, cuenta_stp_clabe')
+        .eq('id', ciudadanoId)
+        .maybeSingle();
+
+      if (ciudadano) {
+        estadoKyc = ciudadano.estado_kyc ?? 'Pendiente';
+        saldo = Number(ciudadano.saldo_wallet) || 0;
+        clabe = ciudadano.cuenta_stp_clabe || 'No asignada';
+      }
+
+      // 3. Obtener obligaciones
+      const { data } = await supabase
+        .from('obligaciones')
+        .select('id, tipo_tramite, monto_total, fecha_vencimiento, estado_cumplimiento')
+        .eq('ciudadano_id', ciudadanoId)
+        .order('fecha_vencimiento', { ascending: true });
+      
+      if (data) obligaciones = data as Obligacion[];
+    }
   }
 
-  // TODO: obtener saldo y CLABE real desde tabla `wallets`
-  const saldo = 500;
-  const clabe = '646180 5000 0123 4567 89';
+  // Si no hay obligaciones reales, mostrar mocks para la demo (opcional, mejor mostrar vacío si es producción)
+  if (obligaciones.length === 0) {
+    obligaciones = MOCK_OBLIGACIONES;
+  }
+
+  // Mapeo de estados KYC para la UI
+  const kycConfig: Record<string, { label: string; icon: string; color: string }> = {
+    Verificado: { label: 'KYC Verificado', icon: 'verified', color: 'text-primary bg-primary-fixed/40' },
+    EnProceso:  { label: 'KYC en Revisión', icon: 'pending', color: 'text-amber-500 bg-amber-500/10' },
+    Rechazado:  { label: 'KYC Rechazado', icon: 'error', color: 'text-red-500 bg-red-500/10' },
+    Pendiente:  { label: 'Verificación Pendiente', icon: 'hourglass_empty', color: 'text-toj-text-secondary bg-surface-container' },
+  };
+
+  const currentKyc = kycConfig[estadoKyc] || kycConfig.Pendiente;
 
   return (
     <>
@@ -71,7 +104,9 @@ export default async function CiudadanoDashboardPage() {
                 <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center group-hover:bg-primary/80 transition-colors">
                   <span className="text-on-primary font-bold text-[14px]">{iniciales}</span>
                 </div>
-                <span className="absolute -top-1 -right-1 bg-primary border-2 border-surface rounded-full px-1 py-0.5 text-[8px] font-bold text-on-primary leading-none">KYC</span>
+                <span className={`absolute -top-1 -right-1 border-2 border-surface rounded-full px-1 py-0.5 text-[8px] font-bold leading-none ${estadoKyc === 'Verificado' ? 'bg-primary text-on-primary' : 'bg-toj-terracotta text-white'}`}>
+                  {estadoKyc === 'Verificado' ? 'OK' : '!'}
+                </span>
               </button>
             </form>
           </div>
@@ -82,10 +117,10 @@ export default async function CiudadanoDashboardPage() {
           <h1 className="text-h3 font-bold text-on-surface">
             Hola, {nombreCompleto.split(' ')[0]} 👋
           </h1>
-          <div className="flex items-center gap-1.5 bg-primary-fixed/40 text-primary px-3 py-1 rounded-full w-fit">
-            <span className="material-symbols-outlined text-[16px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-            <span className="text-label-caps font-bold tracking-widest uppercase">KYC Verificado</span>
-          </div>
+          <Link href="/kyc" className={`flex items-center gap-1.5 px-3 py-1 rounded-full w-fit transition-opacity hover:opacity-80 ${currentKyc.color}`}>
+            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{currentKyc.icon}</span>
+            <span className="text-label-caps font-bold tracking-widest uppercase">{currentKyc.label}</span>
+          </Link>
         </section>
 
         {/* Wallet */}
@@ -100,9 +135,15 @@ export default async function CiudadanoDashboardPage() {
             <Link href={'/pagos' as Route} className="text-body-sm font-semibold text-primary hover:underline">Ver todo</Link>
           </div>
           <div className="space-y-3">
-            {obligaciones.map((ob) => (
-              <ObligacionCard key={ob.id} obligacion={ob} />
-            ))}
+            {obligaciones.length > 0 ? (
+              obligaciones.map((ob) => (
+                <ObligacionCard key={ob.id} obligacion={ob} />
+              ))
+            ) : (
+              <div className="p-8 text-center bg-surface-container rounded-3xl border border-dashed border-outline-variant">
+                <p className="text-on-surface-variant text-body-sm italic">No tienes obligaciones pendientes por ahora.</p>
+              </div>
+            )}
           </div>
         </section>
 

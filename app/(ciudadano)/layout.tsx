@@ -1,21 +1,48 @@
-import { BottomNavBar } from '@/components/ciudadano/BottomNavBar';
+import { BottomNavBar } from "@/components/ciudadano/BottomNavBar";
+import { SideNav } from "@/components/ciudadano/SideNav";
 
 /**
- * Layout ciudadano — mobile-first (max 430px) con BottomNavBar.
- * En desktop se centra con sombra simulando un teléfono.
- * Cada página maneja su propio sticky header interno.
+ * Layout ciudadano
+ *
+ * Mobile  → pantalla completa, BottomNavBar fija abajo.
+ * Desktop → SideNav (240 px) a la izquierda + área de contenido flexible.
+ *           El phone-frame desaparece: la app se comporta como un dashboard web.
  */
 export default function CiudadanoLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="min-h-screen bg-[#e8f0ef] md:flex md:items-start md:justify-center md:pt-6">
-      <div className="relative min-h-screen w-full max-w-[430px] overflow-hidden bg-surface md:min-h-[calc(100vh-48px)] md:rounded-3xl md:shadow-2xl">
-        {/* Contenido de la página — padding-bottom para que no tape la BottomNavBar */}
-        <main className="pb-[calc(68px+env(safe-area-inset-bottom))]">
+    <div className="min-h-screen bg-[#e8f0ef] md:flex md:bg-surface">
+      {/* ── Sidebar ── solo en desktop */}
+      <SideNav />
+
+      {/* ── Contenido principal ────────────────────────────────────── */}
+      {/*
+       *  Mobile:  max-w-[430px] centrado, overflow-hidden, con phone-frame
+       *  Desktop: flex-1, sin límite, sin frame, scroll independiente
+       */}
+      <div
+        className="
+          relative w-full overflow-hidden bg-surface
+          /* mobile: phone-frame */
+          max-w-[430px] mx-auto min-h-screen
+          /* desktop: full flexible */
+          md:flex-1 md:max-w-none md:mx-0 md:overflow-auto
+          md:border-l md:border-outline-variant
+        "
+      >
+        <main
+          className="
+            /* mobile: padding para que el contenido no quede bajo la BottomNavBar */
+            pb-[calc(68px+env(safe-area-inset-bottom))]
+            /* desktop: sin ese padding, contenido centrado a un ancho legible */
+            md:pb-10 md:max-w-3xl md:mx-auto
+          "
+        >
           {children}
         </main>
-        {/* Navegación inferior fija */}
+
+        {/* BottomNavBar: se oculta en desktop desde su propio componente */}
         <BottomNavBar />
       </div>
     </div>

@@ -5,7 +5,7 @@
 
 DO $$
 DECLARE
-  v_auth_uid   UUID := '2749ea87-8c64-4cae-b144-1403ebfb0a65'; -- ← TU UUID
+  v_auth_uid   UUID := 'PEGA-AQUI-EL-UUID-DEL-AUTH-USER'; -- ← CAMBIAR
   v_inst_id    UUID := 'aaaaaaaa-0000-0000-0000-000000000001';
   v_usuario_id UUID;
 BEGIN

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { actualizarFotoPerfil } from './actions';
 import Avatar from '@/components/ciudadano/Avatar';
 
@@ -10,6 +11,7 @@ interface PhotoUploadProps {
 }
 
 export default function PhotoUpload({ avatarUrl, nombre }: PhotoUploadProps) {
+  const router = useRouter();
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
@@ -39,9 +41,14 @@ export default function PhotoUpload({ avatarUrl, nombre }: PhotoUploadProps) {
       if ('error' in result) {
         setError(result.error);
       } else {
+        if (localPreview?.startsWith('blob:')) {
+          URL.revokeObjectURL(localPreview);
+        }
+        setLocalPreview(result.avatarUrl);
         // La preview local ya muestra la foto; limpiamos el archivo pendiente
         setPendingFile(null);
         setError('');
+        router.refresh();
       }
     });
   }

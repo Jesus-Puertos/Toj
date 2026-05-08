@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
-import type { Route } from "next";
+import { CameraCapture } from "@/components/ciudadano/kyc/CameraCapture";
+import { DocumentUpload } from "@/components/ciudadano/kyc/DocumentUpload";
 import { completarKyc } from "./actions";
+
+// ── Stepper ──────────────────────────────────────────────────────────────────
 
 type Paso = { numero: number; label: string; sublabel: string };
 
@@ -20,7 +22,11 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
         <div key={paso.numero} className="flex items-start flex-1">
           <div className="flex flex-col items-center gap-1.5">
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-[15px] ${pasoActual >= paso.numero ? "bg-primary text-on-primary" : "bg-surface-container border-2 border-outline-variant text-on-surface-variant"}`}
+              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-[15px] ${
+                pasoActual >= paso.numero
+                  ? "bg-primary text-on-primary"
+                  : "bg-surface-container border-2 border-outline-variant text-on-surface-variant"
+              }`}
             >
               {pasoActual > paso.numero ? (
                 <span
@@ -35,7 +41,11 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
             </div>
             <div className="text-center">
               <p
-                className={`text-label-caps font-bold tracking-widest leading-tight ${pasoActual >= paso.numero ? "text-primary" : "text-on-surface-variant"}`}
+                className={`text-label-caps font-bold tracking-widest leading-tight ${
+                  pasoActual >= paso.numero
+                    ? "text-primary"
+                    : "text-on-surface-variant"
+                }`}
               >
                 {paso.label}
               </p>
@@ -46,7 +56,9 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
           </div>
           {idx < PASOS.length - 1 && (
             <div
-              className={`flex-1 h-0.5 mx-2 mt-4 ${pasoActual > paso.numero ? "bg-primary" : "bg-outline-variant"}`}
+              className={`flex-1 h-0.5 mx-2 mt-4 ${
+                pasoActual > paso.numero ? "bg-primary" : "bg-outline-variant"
+              }`}
             />
           )}
         </div>
@@ -55,108 +67,106 @@ function Stepper({ pasoActual }: { pasoActual: number }) {
   );
 }
 
-function StepIdentidad({ onNext }: { onNext: () => void }) {
+// ── Paso 1: Selfie ────────────────────────────────────────────────────────────
+
+function StepIdentidad({
+  onNext,
+  onCaptura,
+}: {
+  onNext: () => void;
+  onCaptura: (dataUrl: string) => void;
+}) {
+  const [selfie, setSelfie] = useState<string | null>(null);
+
+  function handleCaptura(dataUrl: string) {
+    setSelfie(dataUrl);
+    onCaptura(dataUrl);
+  }
+
   return (
-    <div className="text-center">
-      <h1 className="text-h2 font-bold text-on-surface">
-        Verifica tu identidad
-      </h1>
-      <p className="text-body-md text-on-surface-variant mt-2">
-        Toma una selfie para confirmar que eres tú
-      </p>
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 mt-6">
-        <p className="text-label-caps text-on-surface-variant font-bold tracking-widest mb-5 uppercase">
+    <div className="space-y-6">
+      <div className="text-center">
+        <h1 className="text-h2 font-bold text-on-surface">
+          Verifica tu identidad
+        </h1>
+        <p className="text-body-md text-on-surface-variant mt-1">
+          Toma una selfie para confirmar que eres tú
+        </p>
+      </div>
+
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6">
+        <p className="text-label-caps text-on-surface-variant font-bold tracking-widest mb-5 uppercase text-center">
           Posiciona tu rostro en el círculo
         </p>
-        <div className="relative mx-auto w-56 h-56 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border-4 border-primary animate-pulse-ring opacity-60" />
-          <div className="absolute inset-4 rounded-full border border-primary/40" />
-          <div className="w-full h-full rounded-full bg-[#0d2420] flex items-center justify-center overflow-hidden">
-            <span
-              className="material-symbols-outlined text-primary/60"
-              style={{
-                fontSize: "80px",
-                fontVariationSettings: "'FILL' 0, 'wght' 200",
-              }}
-            >
-              person
-            </span>
-          </div>
-        </div>
-        <div className="relative mx-auto w-56 h-0 -mt-56 pointer-events-none">
-          <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-primary rounded-tl-sm" />
-          <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-primary rounded-tr-sm" />
-          <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-primary rounded-bl-sm" />
-          <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-primary rounded-br-sm" />
-        </div>
-        <div className="mt-56 pt-1" />
-        <ul className="mt-4 space-y-1.5 text-left">
-          {["Buena iluminación", "Sin lentes oscuros", "Mira de frente"].map(
-            (tip) => (
-              <li
-                key={tip}
-                className="flex items-center gap-2 text-body-sm text-on-surface-variant"
-              >
-                <span
-                  className="material-symbols-outlined text-primary text-[16px]"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  check_circle
-                </span>
-                {tip}
-              </li>
-            ),
-          )}
-        </ul>
+        <CameraCapture onCaptura={handleCaptura} />
       </div>
+
       <button
         onClick={onNext}
-        className="w-full mt-6 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-card"
+        disabled={!selfie}
+        className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors shadow-card disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <span
           className="material-symbols-outlined text-[22px]"
           style={{ fontVariationSettings: "'FILL' 1" }}
         >
-          camera_alt
+          arrow_forward
         </span>
-        Tomar Selfie
-      </button>
-    </div>
-  );
-}
-
-function StepDomicilio({ onNext }: { onNext: () => void }) {
-  return (
-    <div className="text-center space-y-4">
-      <h1 className="text-h2 font-bold text-on-surface">
-        Comprobante de domicilio
-      </h1>
-      <p className="text-body-md text-on-surface-variant">
-        Sube o fotografía tu comprobante de domicilio reciente (menos de 3
-        meses).
-      </p>
-      <div className="bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-2xl p-10 flex flex-col items-center gap-3">
-        <span className="material-symbols-outlined text-on-surface-variant text-[48px]">
-          upload_file
-        </span>
-        <p className="text-body-sm text-on-surface-variant">
-          Toca para subir archivo
-        </p>
-        <span className="text-label-caps text-outline font-bold tracking-wide">
-          PDF, JPG o PNG — Máx. 5 MB
-        </span>
-      </div>
-      <button
-        onClick={onNext}
-        className="w-full bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors"
-      >
         Continuar
       </button>
     </div>
   );
 }
 
-function StepFinalizar() {
+// ── Paso 2: Comprobante de domicilio ─────────────────────────────────────────
+
+function StepDomicilio({
+  onNext,
+  onArchivo,
+}: {
+  onNext: () => void;
+  onArchivo: (file: File) => void;
+}) {
+  const [archivo, setArchivo] = useState<File | null>(null);
+
+  function handleArchivo(file: File) {
+    setArchivo(file);
+    onArchivo(file);
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h1 className="text-h2 font-bold text-on-surface">
+          Comprobante de domicilio
+        </h1>
+        <p className="text-body-md text-on-surface-variant mt-1">
+          Sube o fotografía tu comprobante reciente (menos de 3 meses)
+        </p>
+      </div>
+
+      <DocumentUpload onArchivo={handleArchivo} />
+
+      <button
+        onClick={onNext}
+        disabled={!archivo}
+        className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary rounded-2xl py-4 text-body-md font-bold hover:bg-primary-container transition-colors shadow-card disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span
+          className="material-symbols-outlined text-[22px]"
+          style={{ fontVariationSettings: "'FILL' 1" }}
+        >
+          arrow_forward
+        </span>
+        Continuar
+      </button>
+    </div>
+  );
+}
+
+// ── Paso 3: Finalizar ─────────────────────────────────────────────────────────
+
+function StepFinalizar({ selfie }: { selfie: string | null }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
 
@@ -169,44 +179,68 @@ function StepFinalizar() {
   };
 
   return (
-    <div className="text-center space-y-6 py-8">
-      <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-        <span
-          className="material-symbols-outlined text-primary text-[56px]"
-          style={{ fontVariationSettings: "'FILL' 1" }}
-        >
-          verified
-        </span>
-      </div>
-      <div>
+    <div className="space-y-6 py-4">
+      {/* Selfie de confirmación */}
+      {selfie && (
+        <div className="flex justify-center">
+          <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-primary shadow-lg">
+            <img
+              src={selfie}
+              alt="Tu selfie"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
+              <span
+                className="material-symbols-outlined text-on-primary text-[14px]"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                verified
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="text-center">
         <h1 className="text-h2 font-bold text-on-surface">¡Casi listo!</h1>
-        <p className="text-body-md text-on-surface-variant mt-2">
+        <p className="text-body-md text-on-surface-variant mt-1">
           Tu información está en revisión. Te notificaremos en las próximas 24
           horas.
         </p>
       </div>
-      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 text-left space-y-2">
-        {["Selfie capturada", "Comprobante subido", "Datos en revisión"].map(
-          (item, i) => (
-            <div key={item} className="flex items-center gap-3">
-              <span
-                className={`material-symbols-outlined text-[20px] ${i < 2 ? "text-primary" : "text-outline"}`}
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                {i < 2 ? "check_circle" : "radio_button_unchecked"}
-              </span>
-              <span
-                className={`text-body-sm ${i < 2 ? "text-on-surface font-medium" : "text-on-surface-variant"}`}
-              >
-                {item}
-              </span>
-            </div>
-          ),
-        )}
+
+      {/* Checklist */}
+      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 space-y-3">
+        {[
+          { label: "Selfie capturada", done: !!selfie },
+          { label: "Comprobante subido", done: true },
+          { label: "Datos en revisión", done: false },
+        ].map((item) => (
+          <div key={item.label} className="flex items-center gap-3">
+            <span
+              className={`material-symbols-outlined text-[20px] ${
+                item.done ? "text-primary" : "text-outline"
+              }`}
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              {item.done ? "check_circle" : "radio_button_unchecked"}
+            </span>
+            <span
+              className={`text-body-sm ${
+                item.done
+                  ? "text-on-surface font-medium"
+                  : "text-on-surface-variant"
+              }`}
+            >
+              {item.label}
+            </span>
+          </div>
+        ))}
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm text-red-500">
+        <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm text-red-500 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[16px]">error</span>
           {error}
         </div>
       )}
@@ -221,7 +255,7 @@ function StepFinalizar() {
             <span className="material-symbols-outlined animate-spin text-[22px]">
               progress_activity
             </span>
-            Finalizando...
+            Finalizando…
           </>
         ) : (
           <>
@@ -239,8 +273,14 @@ function StepFinalizar() {
   );
 }
 
+// ── Página principal ──────────────────────────────────────────────────────────
+
 export default function KycPage() {
   const [pasoActual, setPasoActual] = useState(1);
+  const [selfie, setSelfie] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [documento, setDocumento] = useState<File | null>(null);
+
   const avanzar = () => setPasoActual((p) => Math.min(p + 1, 3));
 
   return (
@@ -253,11 +293,17 @@ export default function KycPage() {
           </span>
         </button>
       </header>
+
       <div className="px-5 py-6">
         <Stepper pasoActual={pasoActual} />
-        {pasoActual === 1 && <StepIdentidad onNext={avanzar} />}
-        {pasoActual === 2 && <StepDomicilio onNext={avanzar} />}
-        {pasoActual === 3 && <StepFinalizar />}
+
+        {pasoActual === 1 && (
+          <StepIdentidad onNext={avanzar} onCaptura={setSelfie} />
+        )}
+        {pasoActual === 2 && (
+          <StepDomicilio onNext={avanzar} onArchivo={setDocumento} />
+        )}
+        {pasoActual === 3 && <StepFinalizar selfie={selfie} />}
       </div>
     </div>
   );
